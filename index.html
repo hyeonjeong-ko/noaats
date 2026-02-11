@@ -3,15 +3,112 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>구독 손익분기점 계산기</title>
+    <title>구독 서비스 손익분기 계산기</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <div class="container">
-      <h1>구독 손익분기점 계산기</h1>
-      <p class="deployment-message">배포 테스트 - 정상 작동 확인</p>
-      <div id="app"></div>
+      <header>
+        <h1>📊 구독 서비스 손익분기 계산기</h1>
+        <p class="subtitle">
+          월 구독료 vs 사용 시간을 분석하여 의사결정을 지원합니다
+        </p>
+      </header>
+
+      <main>
+        <!-- 입력 섹션 -->
+        <section class="input-section">
+          <h2>📥 입력 정보</h2>
+          <form id="calculatorForm">
+            <div class="form-group">
+              <label for="monthlyFee">월 구독료 (원)</label>
+              <input
+                type="number"
+                id="monthlyFee"
+                placeholder="예: 9,900"
+                min="0"
+                step="100"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="weeklyHours">주간 사용 시간 (시간/주)</label>
+              <input
+                type="number"
+                id="weeklyHours"
+                placeholder="예: 10"
+                min="0"
+                step="0.5"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn-calculate">🔍 계산하기</button>
+          </form>
+        </section>
+
+        <!-- 결과 섹션 -->
+        <section
+          class="result-section"
+          id="resultSection"
+          style="display: none"
+        >
+          <h2>📤 계산 결과</h2>
+
+          <div class="result-card">
+            <div class="result-item">
+              <span class="label">월 구독료</span>
+              <span class="value" id="resultFee">-</span>
+            </div>
+            <div class="result-item">
+              <span class="label">월 총 사용 시간</span>
+              <span class="value" id="resultTotalHours">-</span>
+              <span class="unit">시간</span>
+            </div>
+          </div>
+
+          <div class="result-card highlight">
+            <div class="result-item main">
+              <span class="label">시간당 비용</span>
+              <span class="value price" id="resultHourlyRate">-</span>
+              <span class="unit">원/시간</span>
+            </div>
+          </div>
+
+          <div class="decision-section">
+            <h3>💡 의사결정 지원</h3>
+            <div id="decisionMessage" class="decision-message">-</div>
+          </div>
+
+          <button
+            type="button"
+            class="btn-reset"
+            onclick="
+              document.getElementById('calculatorForm').reset();
+              document.getElementById('resultSection').style.display = 'none';
+            "
+          >
+            🔄 다시 계산하기
+          </button>
+        </section>
+
+        <!-- 안내 섹션 -->
+        <section class="info-section">
+          <h2>ℹ️ 사용 가이드</h2>
+          <ul>
+            <li>월 구독료를 입력하세요</li>
+            <li>평균 주간 사용 시간을 입력하세요 (4주로 합산됩니다)</li>
+            <li>시간당 비용을 계산하여 구독 가치를 판단할 수 있습니다</li>
+          </ul>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2026 구독 서비스 분석 도구 | 의사결정을 위한 참고용입니다</p>
+      </footer>
     </div>
+
     <script src="js/calculator.js"></script>
     <script src="js/main.js"></script>
   </body>

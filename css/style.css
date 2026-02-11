@@ -1,0 +1,282 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+header .subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+main {
+  padding: 40px 20px;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+section h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 10px;
+}
+
+section h3 {
+  font-size: 16px;
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+/* 폼 스타일 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+}
+
+/* 버튼 스타일 */
+.btn-calculate {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.btn-calculate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-calculate:active {
+  transform: translateY(0);
+}
+
+.btn-reset {
+  width: 100%;
+  padding: 10px;
+  background: #f0f0f0;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 20px;
+}
+
+.btn-reset:hover {
+  background: #e8e8e8;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+/* 결과 카드 */
+.result-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-left: 4px solid #667eea;
+}
+
+.result-card.highlight {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-left: 4px solid #764ba2;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.result-item:last-child {
+  margin-bottom: 0;
+}
+
+.result-item.main {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.result-item .label {
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 0;
+}
+
+.result-item .value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.result-item.main .value {
+  font-size: 36px;
+  color: #764ba2;
+  margin-top: 10px;
+}
+
+.result-item .value.price {
+  color: #e74c3c;
+}
+
+.result-item .unit {
+  font-size: 12px;
+  color: #999;
+  margin-left: 5px;
+}
+
+.result-item.main .unit {
+  margin-left: 0;
+  margin-top: 5px;
+}
+
+/* 의사결정 섹션 */
+.decision-section {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.decision-message {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #856404;
+}
+
+.decision-message.good {
+  color: #155724;
+  background: #d4edda;
+}
+
+.decision-message.warning {
+  color: #856404;
+  background: #fff3cd;
+}
+
+.decision-message.poor {
+  color: #721c24;
+  background: #f8d7da;
+}
+
+/* 정보 섹션 */
+.info-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info-section li {
+  padding: 10px 0;
+  padding-left: 25px;
+  position: relative;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.info-section li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #667eea;
+  font-weight: bold;
+}
+
+/* 푸터 */
+footer {
+  background: #f8f9fa;
+  padding: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  header {
+    padding: 30px 15px;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
+
+  main {
+    padding: 20px 15px;
+  }
+
+  .result-item .value {
+    font-size: 20px;
+  }
+
+  .result-item.main .value {
+    font-size: 28px;
+  }
+}
