@@ -27,21 +27,38 @@
                 id="monthlyFee"
                 placeholder="예: 9,900"
                 min="0"
-                step="100"
+                step="1"
                 required
               />
             </div>
 
             <div class="form-group">
-              <label for="weeklyHours">주간 사용 시간 (시간/주)</label>
-              <input
-                type="number"
-                id="weeklyHours"
-                placeholder="예: 10"
-                min="0"
-                step="0.5"
-                required
-              />
+              <label>주간 사용 시간 (시간/주)</label>
+              <div class="time-input-group">
+                <div class="time-input">
+                  <input
+                    type="number"
+                    id="weeklyHours"
+                    placeholder="0"
+                    min="0"
+                    max="23"
+                    step="1"
+                    required
+                  />
+                  <span class="time-unit">시간</span>
+                </div>
+                <div class="time-input">
+                  <input
+                    type="number"
+                    id="weeklyMinutes"
+                    placeholder="0"
+                    min="0"
+                    max="59"
+                    step="1"
+                  />
+                  <span class="time-unit">분</span>
+                </div>
+              </div>
             </div>
 
             <button type="submit" class="btn-calculate">🔍 계산하기</button>
@@ -64,7 +81,6 @@
             <div class="result-item">
               <span class="label">월 총 사용 시간</span>
               <span class="value" id="resultTotalHours">-</span>
-              <span class="unit">시간</span>
             </div>
           </div>
 

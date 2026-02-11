@@ -8,16 +8,20 @@ class SubscriptionCalculator {
    * 월 구독료 기반 시간당 비용 계산
    * @param {number} monthlyFee - 월 구독료 (원)
    * @param {number} weeklyHours - 주간 사용 시간
+   * @param {number} weeklyMinutes - 주간 사용 분 (기본값: 0)
    * @returns {object} 계산 결과
    */
-  calculateBreakEven(monthlyFee, weeklyHours) {
+  calculateBreakEven(monthlyFee, weeklyHours, weeklyMinutes = 0) {
     // 입력값 검증
-    if (monthlyFee < 0 || weeklyHours < 0) {
+    if (monthlyFee < 0 || weeklyHours < 0 || weeklyMinutes < 0) {
       throw new Error("입력값은 0 이상이어야 합니다.");
     }
 
+    // 주간 총 시간을 시간 단위로 통합 (분을 시간으로 변환)
+    const weeklyTotalHours = weeklyHours + weeklyMinutes / 60;
+
     // 월 총 사용 시간 계산 (4주 기준)
-    const monthlyHours = weeklyHours * 4;
+    const monthlyHours = weeklyTotalHours * 4;
 
     // 시간당 비용 계산
     const hourlyRate =
@@ -28,6 +32,8 @@ class SubscriptionCalculator {
     return {
       monthlyFee: monthlyFee,
       weeklyHours: weeklyHours,
+      weeklyMinutes: weeklyMinutes,
+      weeklyTotalHours: weeklyTotalHours,
       monthlyHours: monthlyHours,
       hourlyRate: hourlyRate,
       timestamp: new Date(),
@@ -54,7 +60,7 @@ class SubscriptionCalculator {
     let message = `
             <strong>월 ${monthlyFee.toLocaleString()}원 구독 분석</strong>
             <br><br>
-            <strong>📊 시간당 비용: ${hourlyRate.toLocaleString()}원/시간</strong>
+            <strong>시간당 비용: ${hourlyRate.toLocaleString()}원/시간</strong>
             <br>
         `;
 

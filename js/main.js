@@ -7,51 +7,62 @@
 const calculator = new SubscriptionCalculator();
 
 // DOM 요소들
-const form = document.getElementById('calculatorForm');
-const monthlyFeeInput = document.getElementById('monthlyFee');
-const weeklyHoursInput = document.getElementById('weeklyHours');
-const resultSection = document.getElementById('resultSection');
+const form = document.getElementById("calculatorForm");
+const monthlyFeeInput = document.getElementById("monthlyFee");
+const weeklyHoursInput = document.getElementById("weeklyHours");
+const weeklyMinutesInput = document.getElementById("weeklyMinutes");
+const resultSection = document.getElementById("resultSection");
 
 // 결과 요소들
-const resultFeeElement = document.getElementById('resultFee');
-const resultTotalHoursElement = document.getElementById('resultTotalHours');
-const resultHourlyRateElement = document.getElementById('resultHourlyRate');
-const decisionMessageElement = document.getElementById('decisionMessage');
+const resultFeeElement = document.getElementById("resultFee");
+const resultTotalHoursElement = document.getElementById("resultTotalHours");
+const resultHourlyRateElement = document.getElementById("resultHourlyRate");
+const decisionMessageElement = document.getElementById("decisionMessage");
 
 /**
  * 폼 제출 이벤트 핸들러
  */
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    // 입력값 가져오기
-    const monthlyFee = parseFloat(monthlyFeeInput.value);
-    const weeklyHours = parseFloat(weeklyHoursInput.value);
+  // 입력값 가져오기
+  const monthlyFee = parseFloat(monthlyFeeInput.value);
+  const weeklyHours = parseFloat(weeklyHoursInput.value) || 0;
+  const weeklyMinutes = parseFloat(weeklyMinutesInput.value) || 0;
 
-    // 유효성 검사
-    if (isNaN(monthlyFee) || isNaN(weeklyHours)) {
-        alert('올바른 숫자를 입력해주세요.');
-        return;
-    }
+  // 유효성 검사
+  if (isNaN(monthlyFee)) {
+    alert("월 구독료를 올바르게 입력해주세요.");
+    return;
+  }
 
-    if (monthlyFee < 0 || weeklyHours < 0) {
-        alert('음수는 입력할 수 없습니다.');
-        return;
-    }
+  if (monthlyFee < 0 || weeklyHours < 0 || weeklyMinutes < 0) {
+    alert("음수는 입력할 수 없습니다.");
+    return;
+  }
 
-    try {
-        // 계산 수행
-        const result = calculator.calculateBreakEven(monthlyFee, weeklyHours);
+  // 분이 0-59 범위인지 확인
+  if (weeklyMinutes >= 60) {
+    alert("분은 0-59 사이의 값으로 입력해주세요.");
+    return;
+  }
 
-        // 결과 표시
-        displayResults(result);
+  try {
+    // 계산 수행
+    const result = calculator.calculateBreakEven(
+      monthlyFee,
+      weeklyHours,
+      weeklyMinutes,
+    );
 
-        // 결과 저장
-        calculator.saveResult(result);
+    // 결과 표시
+    displayResults(result);
 
-    } catch (error) {
-        alert('계산 중 오류가 발생했습니다: ' + error.message);
-    }
+    // 결과 저장
+    calculator.saveResult(result);
+  } catch (error) {
+    alert("계산 중 오류가 발생했습니다: " + error.message);
+  }
 });
 
 /**
@@ -59,25 +70,32 @@ form.addEventListener('submit', function(e) {
  * @param {object} result - 계산 결과
  */
 function displayResults(result) {
-    // 결과 요소 업데이트
-    resultFeeElement.textContent = `${calculator.formatCurrency(result.monthlyFee)}원`;
-    resultTotalHoursElement.textContent = calculator.formatHours(result.monthlyHours);
-    resultHourlyRateElement.textContent = `${calculator.formatCurrency(result.hourlyRate)}원`;
+  // 월 총 사용 시간을 시간:분 형식으로 변환
+  const monthlyHoursInt = Math.floor(result.monthlyHours);
+  const monthlyMinutes = Math.round(
+    (result.monthlyHours - monthlyHoursInt) * 60,
+  );
+  const formattedMonthlyHours = `${monthlyHoursInt}시간 ${monthlyMinutes}분`;
 
-    // 의사결정 메시지 생성 및 표시
-    const decisionMessage = calculator.generateDecisionMessage(result);
-    decisionMessageElement.innerHTML = decisionMessage;
+  // 결과 요소 업데이트
+  resultFeeElement.textContent = `${calculator.formatCurrency(result.monthlyFee)}원`;
+  resultTotalHoursElement.textContent = formattedMonthlyHours;
+  resultHourlyRateElement.textContent = `${calculator.formatCurrency(result.hourlyRate)}원`;
 
-    // 시간당 비용에 따른 스타일 적용
-    applyDecisionStyle(result.hourlyRate);
+  // 의사결정 메시지 생성 및 표시
+  const decisionMessage = calculator.generateDecisionMessage(result);
+  decisionMessageElement.innerHTML = decisionMessage;
 
-    // 결과 섹션 표시
-    resultSection.style.display = 'block';
+  // 시간당 비용에 따른 스타일 적용
+  applyDecisionStyle(result.hourlyRate);
 
-    // 결과 섹션으로 스크롤
-    setTimeout(() => {
-        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+  // 결과 섹션 표시
+  resultSection.style.display = "block";
+
+  // 결과 섹션으로 스크롤
+  setTimeout(() => {
+    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
 }
 
 /**
@@ -85,59 +103,63 @@ function displayResults(result) {
  * @param {number} hourlyRate - 시간당 비용
  */
 function applyDecisionStyle(hourlyRate) {
-    const decisionMsg = decisionMessageElement;
+  const decisionMsg = decisionMessageElement;
 
-    // 기존 클래스 제거
-    decisionMsg.classList.remove('good', 'warning', 'poor');
+  // 기존 클래스 제거
+  decisionMsg.classList.remove("good", "warning", "poor");
 
-    // 새로운 클래스 추가
-    if (hourlyRate < 1000) {
-        decisionMsg.classList.add('good');
-        decisionMessageElement.parentElement.style.background = '#d4edda';
-        decisionMessageElement.parentElement.style.borderLeft = '4px solid #28a745';
-    } else if (hourlyRate < 3000) {
-        decisionMsg.classList.add('good');
-        decisionMessageElement.parentElement.style.background = '#fff3cd';
-        decisionMessageElement.parentElement.style.borderLeft = '4px solid #ffc107';
-    } else if (hourlyRate < 5000) {
-        decisionMsg.classList.add('warning');
-        decisionMessageElement.parentElement.style.background = '#fff3cd';
-        decisionMessageElement.parentElement.style.borderLeft = '4px solid #ffc107';
-    } else {
-        decisionMsg.classList.add('poor');
-        decisionMessageElement.parentElement.style.background = '#f8d7da';
-        decisionMessageElement.parentElement.style.borderLeft = '4px solid #dc3545';
-    }
+  // 새로운 클래스 추가
+  if (hourlyRate < 1000) {
+    decisionMsg.classList.add("good");
+    decisionMessageElement.parentElement.style.background = "#d4edda";
+    decisionMessageElement.parentElement.style.borderLeft = "4px solid #28a745";
+  } else if (hourlyRate < 3000) {
+    decisionMsg.classList.add("good");
+    decisionMessageElement.parentElement.style.background = "#fff3cd";
+    decisionMessageElement.parentElement.style.borderLeft = "4px solid #ffc107";
+  } else if (hourlyRate < 5000) {
+    decisionMsg.classList.add("warning");
+    decisionMessageElement.parentElement.style.background = "#fff3cd";
+    decisionMessageElement.parentElement.style.borderLeft = "4px solid #ffc107";
+  } else {
+    decisionMsg.classList.add("poor");
+    decisionMessageElement.parentElement.style.background = "#f8d7da";
+    decisionMessageElement.parentElement.style.borderLeft = "4px solid #dc3545";
+  }
 }
 
 /**
  * 페이지 로드 시 초기화
  */
-document.addEventListener('DOMContentLoaded', function() {
-    // 초기 포커스 설정
-    monthlyFeeInput.focus();
+document.addEventListener("DOMContentLoaded", function () {
+  // 초기 포커스 설정
+  monthlyFeeInput.focus();
 
-    // 개발 환경에서 기본값 설정 (선택사항)
-    // monthlyFeeInput.value = '9900';
-    // weeklyHoursInput.value = '10';
+  // 개발 환경에서 기본값 설정 (선택사항)
+  // monthlyFeeInput.value = '9900';
+  // weeklyHoursInput.value = '10';
 });
 
 /**
  * 입력 필드 포커스 시 자동 선택
  */
-monthlyFeeInput.addEventListener('focus', function() {
-    this.select();
+monthlyFeeInput.addEventListener("focus", function () {
+  this.select();
 });
 
-weeklyHoursInput.addEventListener('focus', function() {
-    this.select();
+weeklyHoursInput.addEventListener("focus", function () {
+  this.select();
+});
+
+weeklyMinutesInput.addEventListener("focus", function () {
+  this.select();
 });
 
 /**
  * Enter 키로도 계산 가능하도록
  */
-weeklyHoursInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        form.dispatchEvent(new Event('submit'));
-    }
+weeklyMinutesInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    form.dispatchEvent(new Event("submit"));
+  }
 });
