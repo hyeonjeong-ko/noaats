@@ -61,12 +61,25 @@ class SubscriptionCalculator {
     // 시간당 비용 계산
     const costPerHour = Math.round((monthlyFee / actualTotalHours) * 100) / 100;
 
+    // v3 추가: 미활용 비용 = 월 구독료 × (1 - 활용률%)
+    const unusedCost =
+      Math.round(monthlyFee * (1 - utilizationRate / 100) * 100) / 100;
+
+    // v3 추가: 연간 누적 손실 = 미활용 비용 × 12
+    const annualUnusedCost = Math.round(unusedCost * 12 * 100) / 100;
+
+    // v3 추가: 남은 사용 시간 = 기대 사용 시간 - 실제 사용 시간
+    const remainingHours = Math.max(0, expectedTotalHours - actualTotalHours);
+
     return {
       monthlyFee: monthlyFee,
       expectedTotalHours: expectedTotalHours,
       actualTotalHours: actualTotalHours,
       utilizationRate: utilizationRate,
       costPerHour: costPerHour,
+      unusedCost: unusedCost,
+      annualUnusedCost: annualUnusedCost,
+      remainingHours: remainingHours,
       timestamp: new Date(),
     };
   }
@@ -111,6 +124,75 @@ class SubscriptionCalculator {
       <br><br>
       기대 사용량의 겨우 ${utilizationRate.toFixed(0)}%만 사용 중입니다.
       <br>구독 해지를 검토하거나, 향후 사용 계획을 재검토하기를 강력히 권장합니다.
+    `;
+  }
+
+  /**
+   * v3: 미활용 비용 및 손실 정보 메시지 생성
+   * @param {object} result - calculateUtilization 결과
+   * @returns {string} 미활용 비용 관련 메시지
+   */
+  generateUnusedCostMessage(result) {
+    const { monthlyFee, unusedCost, annualUnusedCost, utilizationRate } =
+      result;
+
+    if (utilizationRate >= 100) {
+      return `
+        <strong style="color: #28a745;">💚 미활용 비용이 없습니다!</strong>
+        <br><br>
+        기대 수준 이상으로 활용하고 있어 추가 충고는 불필요합니다.
+      `;
+    }
+
+    return `
+      <strong>이번 달 미활용 비용:</strong> ${this.formatCurrency(unusedCost)}원
+      <br>
+      <strong>1년 누적 손실:</strong> ${this.formatCurrency(annualUnusedCost)}원
+      <br><br>
+      <em>이번 달 약 ${this.formatCurrency(unusedCost)}원의 가치가 충분히 활용되지 않았습니다.<br>
+      1년 유지 시 약 ${this.formatCurrency(annualUnusedCost)}원의 미활용 비용이 발생할 수 있습니다.</em>
+    `;
+  }
+
+  /**
+   * v3: 본전 회복 시뮬레이터 메시지 생성
+   * @param {object} result - calculateUtilization 결과
+   * @returns {string} 본전 회복 시뮬레이터 메시지
+   */
+  generateBreakEvenSimulator(result) {
+    const { remainingHours, utilizationRate } = result;
+
+    if (utilizationRate >= 100) {
+      return `
+        <strong style="color: #28a745;">✅ 이미 본전을 넘었습니다!</strong><br>
+        추가 사용이 필요없습니다.
+      `;
+    }
+
+    if (remainingHours <= 0) {
+      return `
+        <strong style="color: #28a745;">✅ 이미 본전을 넘었습니다!</strong>
+      `;
+    }
+
+    // 남은 사용 시간 계산
+    const remainingHoursFull = Math.floor(remainingHours);
+    const remainingMinutes = Math.round(
+      (remainingHours - remainingHoursFull) * 60,
+    );
+
+    // 일일 권장 사용량 (20분)을 기준으로 필요 일수 계산
+    const dailyUsageMinutes = 20;
+    const requiredDays = Math.ceil(
+      (remainingHoursFull * 60 + remainingMinutes) / dailyUsageMinutes,
+    );
+
+    return `
+      <strong>기대 기준까지 남은 사용:</strong> ${this.formatHours(remainingHours)}
+      <br>
+      <strong>일일 20분 사용 시:</strong> ${requiredDays}일 후 본전 도달
+      <br><br>
+      <em>하루 20분씩 ${requiredDays}일 더 사용하면 기대 기준에 도달합니다.</em>
     `;
   }
 

@@ -108,38 +108,49 @@
         >
           <h2>� 분석 결과</h2>
 
-          <div class="result-card">
-            <div class="result-item">
-              <span class="label">월 구독료</span>
-              <span class="value" id="resultFee">-</span>
+          <div class="result-grid">
+            <!-- 카드 1: 기본 정보 -->
+            <div class="result-card">
+              <h3>📋 기본 정보</h3>
+              <div class="result-item">
+                <span class="label">월 구독료</span>
+                <span class="value" id="resultFee">-</span>
+              </div>
+              <div class="result-item">
+                <span class="label">기대 사용</span>
+                <span class="value" id="resultExpectedHours">-</span>
+              </div>
+              <div class="result-item">
+                <span class="label">실제 사용</span>
+                <span class="value" id="resultActualHours">-</span>
+              </div>
+              <div class="result-item">
+                <span class="label">시간당 비용</span>
+                <span class="value" id="resultCostPerHour">-</span>
+              </div>
             </div>
-            <div class="result-item">
-              <span class="label">기대 사용 시간</span>
-              <span class="value" id="resultExpectedHours">-</span>
-            </div>
-            <div class="result-item">
-              <span class="label">실제 사용 시간</span>
-              <span class="value" id="resultActualHours">-</span>
-            </div>
-          </div>
 
-          <div class="result-card highlight">
-            <h3>📈 활용률 분석</h3>
-            <div class="result-item main">
-              <span class="label">활용률</span>
-              <span class="value" id="resultUtilizationRate">-</span>
-              <span class="unit">%</span>
+            <!-- 카드 2: 활용률 분석 -->
+            <div class="result-card highlight">
+              <h3>📈 활용률</h3>
+              <div class="result-item main">
+                <span class="label">활용률</span>
+                <span class="value" id="resultUtilizationRate">-</span>
+              </div>
+              <div id="unusedCostMessage" class="decision-message">-</div>
             </div>
-            <div class="result-item">
-              <span class="label">시간당 비용</span>
-              <span class="value" id="resultCostPerHour">-</span>
-              <span class="unit">원/시간</span>
-            </div>
-          </div>
 
-          <div class="decision-section">
-            <h3>💡 의사결정 지원</h3>
-            <div id="decisionMessage" class="decision-message">-</div>
+            <!-- 카드 3: 의사결정 지원 -->
+            <div class="result-card decision-card">
+              <h3>💡 의사결정</h3>
+              <div id="decisionMessage" class="decision-message">-</div>
+            </div>
+
+            <!-- 카드 4: 본전 회복 -->
+            <div class="result-card breakeven-card">
+              <h3>⏱️ 본전 회복</h3>
+              <div id="breakEvenMessage" class="decision-message">-</div>
+            </div>
           </div>
 
           <button

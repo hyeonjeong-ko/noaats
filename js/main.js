@@ -1,5 +1,5 @@
 /**
- * 구독 서비스 손익분기 계산기 - 메인 로직 (v2)
+ * 구독 서비스 손익분기 계산기 - 메인 로직 (v3)
  * UI 및 이벤트 핸들링
  */
 
@@ -26,6 +26,10 @@ const resultUtilizationRateElement = document.getElementById(
 );
 const resultCostPerHourElement = document.getElementById("resultCostPerHour");
 const decisionMessageElement = document.getElementById("decisionMessage");
+
+// v3 추가: DOM 요소들 (v3 결과)
+const unusedCostMessageElement = document.getElementById("unusedCostMessage");
+const breakEvenMessageElement = document.getElementById("breakEvenMessage");
 
 /**
  * 폼 제출 이벤트 핸들러
@@ -112,7 +116,7 @@ function displayResults(result) {
   resultFeeElement.textContent = `${calculator.formatCurrency(result.monthlyFee)}원`;
   resultExpectedHoursElement.textContent = formattedExpectedHours;
   resultActualHoursElement.textContent = formattedActualHours;
-  resultUtilizationRateElement.textContent = result.utilizationRate.toFixed(1);
+  resultUtilizationRateElement.textContent = `${result.utilizationRate.toFixed(1)}%`;
   resultCostPerHourElement.textContent = `${calculator.formatCurrency(result.costPerHour)}원`;
 
   // 활용률에 따른 색상 적용
@@ -127,6 +131,14 @@ function displayResults(result) {
   // 의사결정 메시지 생성 및 표시
   const decisionMessage = calculator.generateDecisionMessage(result);
   decisionMessageElement.innerHTML = decisionMessage;
+
+  // v3 추가: 미활용 비용 메시지 생성 및 표시
+  const unusedCostMessage = calculator.generateUnusedCostMessage(result);
+  unusedCostMessageElement.innerHTML = unusedCostMessage;
+
+  // v3 추가: 본전 회복 시뮬레이터 메시지 생성 및 표시
+  const breakEvenMessage = calculator.generateBreakEvenSimulator(result);
+  breakEvenMessageElement.innerHTML = breakEvenMessage;
 
   // 활용률에 따른 스타일 적용
   applyUtilizationStyle(result.utilizationRate);
