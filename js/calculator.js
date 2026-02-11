@@ -1,9 +1,11 @@
 /**
  * 구독 서비스 손익분기 계산기
- * v2 - 활용률 기반 손익분기 의사결정 모델
+ * v3 - 생활소비 환산 모델 (커피 잔 수 기준)
  */
 
 class SubscriptionCalculator {
+  // 생활소비 기준가 (커피 1잔)
+  COFFEE_PRICE = 3500;
   /**
    * 활용률 기반 손익분기 계산 (v2)
    * 공식: 활용률 = 실제 사용 시간 ÷ 기대 사용 시간 × 100%
@@ -71,6 +73,10 @@ class SubscriptionCalculator {
     // v3 추가: 남은 사용 시간 = 기대 사용 시간 - 실제 사용 시간
     const remainingHours = Math.max(0, expectedTotalHours - actualTotalHours);
 
+    // v4 추가: 커피 잔 수 환산
+    const coffeeEquivalent = monthlyFee / this.COFFEE_PRICE;
+    const unusedCoffeeCups = unusedCost / this.COFFEE_PRICE;
+
     return {
       monthlyFee: monthlyFee,
       expectedTotalHours: expectedTotalHours,
@@ -80,6 +86,8 @@ class SubscriptionCalculator {
       unusedCost: unusedCost,
       annualUnusedCost: annualUnusedCost,
       remainingHours: remainingHours,
+      coffeeEquivalent: coffeeEquivalent,
+      unusedCoffeeCups: unusedCoffeeCups,
       timestamp: new Date(),
     };
   }
@@ -193,6 +201,24 @@ class SubscriptionCalculator {
       <strong>일일 20분 사용 시:</strong> ${requiredDays}일 후 본전 도달
       <br><br>
       <em>하루 20분씩 ${requiredDays}일 더 사용하면 기대 기준에 도달합니다.</em>
+    `;
+  }
+
+  /**
+   * v4: 커피 환산 메시지 생성
+   * @param {object} result - calculateUtilization 결과
+   * @returns {string} 커피 환산 메시지
+   */
+  generateCoffeeEquivalenceMessage(result) {
+    const { coffeeEquivalent, unusedCoffeeCups } = result;
+
+    return `
+      <strong>월 구독료 환산:</strong> ☕ ${coffeeEquivalent.toFixed(1)}잔
+      <br>
+      <strong>낭비된 가치:</strong> ☕ ${unusedCoffeeCups.toFixed(1)}잔
+      <br><br>
+      <em>이 구독은 매달 커피 약 ${coffeeEquivalent.toFixed(1)}잔에 해당하며,<br>
+      이번 달 약 ${unusedCoffeeCups.toFixed(1)}잔의 커피를 낭비한 셈입니다.</em>
     `;
   }
 

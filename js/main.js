@@ -31,6 +31,11 @@ const decisionMessageElement = document.getElementById("decisionMessage");
 const unusedCostMessageElement = document.getElementById("unusedCostMessage");
 const breakEvenMessageElement = document.getElementById("breakEvenMessage");
 
+// v4 추가: DOM 요소들 (커피 환산)
+const coffeeEquivalenceMessageElement = document.getElementById(
+  "coffeeEquivalenceMessage",
+);
+
 /**
  * 폼 제출 이벤트 핸들러
  */
@@ -139,6 +144,11 @@ function displayResults(result) {
   // v3 추가: 본전 회복 시뮬레이터 메시지 생성 및 표시
   const breakEvenMessage = calculator.generateBreakEvenSimulator(result);
   breakEvenMessageElement.innerHTML = breakEvenMessage;
+
+  // v4 추가: 커피 환산 메시지 생성 및 표시
+  const coffeeEquivalenceMessage =
+    calculator.generateCoffeeEquivalenceMessage(result);
+  coffeeEquivalenceMessageElement.innerHTML = coffeeEquivalenceMessage;
 
   // 활용률에 따른 스타일 적용
   applyUtilizationStyle(result.utilizationRate);

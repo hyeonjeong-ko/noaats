@@ -329,6 +329,21 @@ input[type="number"]:focus {
   background: #f8d7da;
 }
 
+/* v4: 커피 환산 섹션 */
+.coffee-equivalence-section {
+  background: linear-gradient(135deg, #a8956c15 0%, #d4a37415 100%);
+  border-left: 4px solid #8b6f47;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.coffee-equivalence-section h3 {
+  color: #8b6f47;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
 /* 정보 섹션 */
 .info-section ul {
   list-style: none;
