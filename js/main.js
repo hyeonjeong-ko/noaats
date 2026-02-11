@@ -15,6 +15,16 @@ const actualHoursInput = document.getElementById("actualHours");
 const actualMinutesInput = document.getElementById("actualMinutes");
 const resultSection = document.getElementById("resultSection");
 
+// 실제 사용 시간 입력 방식 라디오 버튼 참조
+const actualTimeInputModeRadios = document.querySelectorAll(
+  'input[name="actualTimeInputMode"]',
+);
+const actualTimeSubLabel = document.getElementById("actualTimeSubLabel");
+const actualHoursUnit = document.getElementById("actualHoursUnit");
+
+// 현재 입력 방식 상태
+let currentActualTimeMode = "weekly"; // "weekly" 또는 "monthly"
+
 // DOM 요소들 (결과)
 const resultFeeElement = document.getElementById("resultFee");
 const resultExpectedHoursElement = document.getElementById(
@@ -41,6 +51,31 @@ const lifestyleEquivalenceMessageElement = document.getElementById(
 let lastCalculationResult = null;
 
 /**
+ * 실제 사용 시간 입력 방식 변경 이벤트 핸들러
+ */
+actualTimeInputModeRadios.forEach((radio) => {
+  radio.addEventListener("change", function () {
+    currentActualTimeMode = this.value;
+
+    if (this.value === "weekly") {
+      actualTimeSubLabel.textContent =
+        "디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)";
+      actualHoursInput.max = "168";
+      actualHoursInput.placeholder = "0";
+    } else {
+      actualTimeSubLabel.textContent =
+        "지난 한 달, 실제로 이 서비스를 얼마나 사용했나요?";
+      actualHoursInput.max = "31";
+      actualHoursInput.placeholder = "0";
+    }
+
+    // 입력값 초기화
+    actualHoursInput.value = "";
+    actualMinutesInput.value = "";
+  });
+});
+
+/**
  * 폼 제출 이벤트 핸들러
  */
 form.addEventListener("submit", function (e) {
@@ -50,8 +85,19 @@ form.addEventListener("submit", function (e) {
   const monthlyFee = parseFloat(monthlyFeeInput.value);
   const expectedHours = parseFloat(expectedHoursInput.value) || 0;
   const expectedMinutes = parseFloat(expectedMinutesInput.value) || 0;
-  const actualHours = parseFloat(actualHoursInput.value) || 0;
-  const actualMinutes = parseFloat(actualMinutesInput.value) || 0;
+  let actualHours = parseFloat(actualHoursInput.value) || 0;
+  let actualMinutes = parseFloat(actualMinutesInput.value) || 0;
+
+  // 주간 입력일 경우 월간으로 변환 (X4)
+  if (currentActualTimeMode === "weekly") {
+    // 총 분 단위로 변환
+    const totalActualMinutes = actualHours * 60 + actualMinutes;
+    // X4 계산
+    const convertedTotalMinutes = totalActualMinutes * 4;
+    // 다시 시간과 분으로 변환
+    actualHours = Math.floor(convertedTotalMinutes / 60);
+    actualMinutes = convertedTotalMinutes % 60;
+  }
 
   // 유효성 검사
   if (isNaN(monthlyFee)) {

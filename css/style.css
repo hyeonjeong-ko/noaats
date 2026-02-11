@@ -102,6 +102,37 @@ small.hint {
   border-left: 3px solid #667eea;
 }
 
+/* 입력 방식 선택기 스타일 */
+.input-mode-selector {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 12px;
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.mode-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+}
+
+.mode-option input[type="radio"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
+}
+
+.mode-option:hover {
+  color: #333;
+}
+
 input[type="number"] {
   width: 100%;
   padding: 14px;
@@ -494,6 +525,10 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  .input-mode-selector {
+    flex-direction: column;
+    gap: 10px;
+  }
   .result-card {
     min-height: auto;
   }
