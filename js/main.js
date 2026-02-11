@@ -1,22 +1,30 @@
 /**
- * 구독 서비스 손익분기 계산기 - 메인 로직
+ * 구독 서비스 손익분기 계산기 - 메인 로직 (v2)
  * UI 및 이벤트 핸들링
  */
 
 // 전역 계산기 인스턴스
 const calculator = new SubscriptionCalculator();
 
-// DOM 요소들
+// DOM 요소들 (입력)
 const form = document.getElementById("calculatorForm");
 const monthlyFeeInput = document.getElementById("monthlyFee");
-const weeklyHoursInput = document.getElementById("weeklyHours");
-const weeklyMinutesInput = document.getElementById("weeklyMinutes");
+const expectedHoursInput = document.getElementById("expectedHours");
+const expectedMinutesInput = document.getElementById("expectedMinutes");
+const actualHoursInput = document.getElementById("actualHours");
+const actualMinutesInput = document.getElementById("actualMinutes");
 const resultSection = document.getElementById("resultSection");
 
-// 결과 요소들
+// DOM 요소들 (결과)
 const resultFeeElement = document.getElementById("resultFee");
-const resultTotalHoursElement = document.getElementById("resultTotalHours");
-const resultHourlyRateElement = document.getElementById("resultHourlyRate");
+const resultExpectedHoursElement = document.getElementById(
+  "resultExpectedHours",
+);
+const resultActualHoursElement = document.getElementById("resultActualHours");
+const resultUtilizationRateElement = document.getElementById(
+  "resultUtilizationRate",
+);
+const resultCostPerHourElement = document.getElementById("resultCostPerHour");
 const decisionMessageElement = document.getElementById("decisionMessage");
 
 /**
@@ -27,8 +35,10 @@ form.addEventListener("submit", function (e) {
 
   // 입력값 가져오기
   const monthlyFee = parseFloat(monthlyFeeInput.value);
-  const weeklyHours = parseFloat(weeklyHoursInput.value) || 0;
-  const weeklyMinutes = parseFloat(weeklyMinutesInput.value) || 0;
+  const expectedHours = parseFloat(expectedHoursInput.value) || 0;
+  const expectedMinutes = parseFloat(expectedMinutesInput.value) || 0;
+  const actualHours = parseFloat(actualHoursInput.value) || 0;
+  const actualMinutes = parseFloat(actualMinutesInput.value) || 0;
 
   // 유효성 검사
   if (isNaN(monthlyFee)) {
@@ -36,23 +46,37 @@ form.addEventListener("submit", function (e) {
     return;
   }
 
-  if (monthlyFee < 0 || weeklyHours < 0 || weeklyMinutes < 0) {
+  if (
+    monthlyFee < 0 ||
+    expectedHours < 0 ||
+    expectedMinutes < 0 ||
+    actualHours < 0 ||
+    actualMinutes < 0
+  ) {
     alert("음수는 입력할 수 없습니다.");
     return;
   }
 
   // 분이 0-59 범위인지 확인
-  if (weeklyMinutes >= 60) {
+  if (expectedMinutes >= 60 || actualMinutes >= 60) {
     alert("분은 0-59 사이의 값으로 입력해주세요.");
+    return;
+  }
+
+  // 기대 사용 시간 검증
+  if (expectedHours === 0 && expectedMinutes === 0) {
+    alert("기대 사용 시간은 0보다 커야 합니다.");
     return;
   }
 
   try {
     // 계산 수행
-    const result = calculator.calculateBreakEven(
+    const result = calculator.calculateUtilization(
       monthlyFee,
-      weeklyHours,
-      weeklyMinutes,
+      expectedHours,
+      expectedMinutes,
+      actualHours,
+      actualMinutes,
     );
 
     // 결과 표시
@@ -66,28 +90,46 @@ form.addEventListener("submit", function (e) {
 });
 
 /**
- * 계산 결과를 UI에 표시
- * @param {object} result - 계산 결과
+ * 계산 결과를 UI에 표시 (v2)
+ * @param {object} result - calculateUtilization 결과
  */
 function displayResults(result) {
-  // 월 총 사용 시간을 시간:분 형식으로 변환
-  const monthlyHoursInt = Math.floor(result.monthlyHours);
-  const monthlyMinutes = Math.round(
-    (result.monthlyHours - monthlyHoursInt) * 60,
+  // 기대 사용 시간을 시간:분 형식으로 변환
+  const expectedHoursInt = Math.floor(result.expectedTotalHours);
+  const expectedMinutesVal = Math.round(
+    (result.expectedTotalHours - expectedHoursInt) * 60,
   );
-  const formattedMonthlyHours = `${monthlyHoursInt}시간 ${monthlyMinutes}분`;
+  const formattedExpectedHours = `${expectedHoursInt}시간 ${expectedMinutesVal}분`;
+
+  // 실제 사용 시간을 시간:분 형식으로 변환
+  const actualHoursInt = Math.floor(result.actualTotalHours);
+  const actualMinutesVal = Math.round(
+    (result.actualTotalHours - actualHoursInt) * 60,
+  );
+  const formattedActualHours = `${actualHoursInt}시간 ${actualMinutesVal}분`;
 
   // 결과 요소 업데이트
   resultFeeElement.textContent = `${calculator.formatCurrency(result.monthlyFee)}원`;
-  resultTotalHoursElement.textContent = formattedMonthlyHours;
-  resultHourlyRateElement.textContent = `${calculator.formatCurrency(result.hourlyRate)}원`;
+  resultExpectedHoursElement.textContent = formattedExpectedHours;
+  resultActualHoursElement.textContent = formattedActualHours;
+  resultUtilizationRateElement.textContent = result.utilizationRate.toFixed(1);
+  resultCostPerHourElement.textContent = `${calculator.formatCurrency(result.costPerHour)}원`;
+
+  // 활용률에 따른 색상 적용
+  if (result.utilizationRate >= 100) {
+    resultUtilizationRateElement.style.color = "#28a745";
+  } else if (result.utilizationRate >= 50) {
+    resultUtilizationRateElement.style.color = "#ffc107";
+  } else {
+    resultUtilizationRateElement.style.color = "#dc3545";
+  }
 
   // 의사결정 메시지 생성 및 표시
   const decisionMessage = calculator.generateDecisionMessage(result);
   decisionMessageElement.innerHTML = decisionMessage;
 
-  // 시간당 비용에 따른 스타일 적용
-  applyDecisionStyle(result.hourlyRate);
+  // 활용률에 따른 스타일 적용
+  applyUtilizationStyle(result.utilizationRate);
 
   // 결과 섹션 표시
   resultSection.style.display = "block";
@@ -99,32 +141,26 @@ function displayResults(result) {
 }
 
 /**
- * 시간당 비용에 따른 의사결정 스타일 적용
- * @param {number} hourlyRate - 시간당 비용
+ * 활용률에 따른 의사결정 스타일 적용 (v2)
+ * @param {number} utilizationRate - 활용률 (%)
  */
-function applyDecisionStyle(hourlyRate) {
-  const decisionMsg = decisionMessageElement;
+function applyUtilizationStyle(utilizationRate) {
+  const decisionSection = decisionMessageElement.parentElement;
 
-  // 기존 클래스 제거
-  decisionMsg.classList.remove("good", "warning", "poor");
+  // 기존 스타일 제거
+  decisionSection.style.background = "";
+  decisionSection.style.borderLeft = "";
 
-  // 새로운 클래스 추가
-  if (hourlyRate < 1000) {
-    decisionMsg.classList.add("good");
-    decisionMessageElement.parentElement.style.background = "#d4edda";
-    decisionMessageElement.parentElement.style.borderLeft = "4px solid #28a745";
-  } else if (hourlyRate < 3000) {
-    decisionMsg.classList.add("good");
-    decisionMessageElement.parentElement.style.background = "#fff3cd";
-    decisionMessageElement.parentElement.style.borderLeft = "4px solid #ffc107";
-  } else if (hourlyRate < 5000) {
-    decisionMsg.classList.add("warning");
-    decisionMessageElement.parentElement.style.background = "#fff3cd";
-    decisionMessageElement.parentElement.style.borderLeft = "4px solid #ffc107";
+  // 활용률에 따른 새로운 스타일 적용
+  if (utilizationRate >= 100) {
+    decisionSection.style.background = "#d4edda";
+    decisionSection.style.borderLeft = "4px solid #28a745";
+  } else if (utilizationRate >= 50) {
+    decisionSection.style.background = "#fff3cd";
+    decisionSection.style.borderLeft = "4px solid #ffc107";
   } else {
-    decisionMsg.classList.add("poor");
-    decisionMessageElement.parentElement.style.background = "#f8d7da";
-    decisionMessageElement.parentElement.style.borderLeft = "4px solid #dc3545";
+    decisionSection.style.background = "#f8d7da";
+    decisionSection.style.borderLeft = "4px solid #dc3545";
   }
 }
 
@@ -134,10 +170,6 @@ function applyDecisionStyle(hourlyRate) {
 document.addEventListener("DOMContentLoaded", function () {
   // 초기 포커스 설정
   monthlyFeeInput.focus();
-
-  // 개발 환경에서 기본값 설정 (선택사항)
-  // monthlyFeeInput.value = '9900';
-  // weeklyHoursInput.value = '10';
 });
 
 /**
@@ -147,18 +179,26 @@ monthlyFeeInput.addEventListener("focus", function () {
   this.select();
 });
 
-weeklyHoursInput.addEventListener("focus", function () {
+expectedHoursInput.addEventListener("focus", function () {
   this.select();
 });
 
-weeklyMinutesInput.addEventListener("focus", function () {
+expectedMinutesInput.addEventListener("focus", function () {
+  this.select();
+});
+
+actualHoursInput.addEventListener("focus", function () {
+  this.select();
+});
+
+actualMinutesInput.addEventListener("focus", function () {
   this.select();
 });
 
 /**
  * Enter 키로도 계산 가능하도록
  */
-weeklyMinutesInput.addEventListener("keypress", function (e) {
+actualMinutesInput.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     form.dispatchEvent(new Event("submit"));
   }

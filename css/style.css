@@ -47,7 +47,7 @@ section {
 }
 
 section h2 {
-  font-size: 18px;
+  font-size: 16px;
   margin-bottom: 20px;
   color: #333;
   border-bottom: 2px solid #667eea;
@@ -55,7 +55,7 @@ section h2 {
 }
 
 section h3 {
-  font-size: 16px;
+  font-size: 14px;
   color: #667eea;
   margin-bottom: 15px;
 }
@@ -67,24 +67,54 @@ section h3 {
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: 600;
   color: #333;
+  font-size: 14px;
+}
+
+.sub-label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #888;
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+small.hint {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #888;
+  font-weight: normal;
+  line-height: 1.8;
+  background: #f0f4ff;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
 }
 
 input[type="number"] {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.3s;
+  padding: 14px;
+  border: 2px solid #e8eaf6;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s;
+  background: #fff;
+}
+
+input[type="number"]:hover {
+  border-color: #c7d4f5;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
 input[type="number"]:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 0 12px rgba(102, 126, 234, 0.25);
+  background: #f8faff;
 }
 
 /* 시간:분 입력 그룹 */
@@ -103,18 +133,25 @@ input[type="number"]:focus {
 
 .time-input input {
   width: 100%;
-  padding: 12px 10px;
-  padding-right: 40px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.3s;
+  padding: 14px 10px;
+  padding-right: 45px;
+  border: 2px solid #e8eaf6;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s;
+  background: #fff;
+}
+
+.time-input input:hover {
+  border-color: #c7d4f5;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
 .time-input input:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 0 12px rgba(102, 126, 234, 0.25);
+  background: #f8faff;
 }
 
 .time-unit {
@@ -205,16 +242,17 @@ input[type="number"]:focus {
   font-weight: 600;
   color: #666;
   margin-bottom: 0;
+  font-size: 13px;
 }
 
 .result-item .value {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   color: #667eea;
 }
 
 .result-item.main .value {
-  font-size: 36px;
+  font-size: 26px;
   color: #764ba2;
   margin-top: 10px;
 }
@@ -224,7 +262,7 @@ input[type="number"]:focus {
 }
 
 .result-item .unit {
-  font-size: 12px;
+  font-size: 11px;
   color: #999;
   margin-left: 5px;
 }
@@ -232,6 +270,7 @@ input[type="number"]:focus {
 .result-item.main .unit {
   margin-left: 0;
   margin-top: 5px;
+  font-size: 12px;
 }
 
 /* 의사결정 섹션 */

@@ -1,97 +1,139 @@
 /**
  * 구독 서비스 손익분기 계산기
- * v1 - 기본 비용 대비 사용 시간 계산
+ * v2 - 활용률 기반 손익분기 의사결정 모델
  */
 
 class SubscriptionCalculator {
   /**
-   * 월 구독료 기반 시간당 비용 계산
+   * 활용률 기반 손익분기 계산 (v2)
+   * 공식: 활용률 = 실제 사용 시간 ÷ 기대 사용 시간 × 100%
+   *
    * @param {number} monthlyFee - 월 구독료 (원)
-   * @param {number} weeklyHours - 주간 사용 시간
-   * @param {number} weeklyMinutes - 주간 사용 분 (기본값: 0)
+   * @param {number} expectedHours - 기대 사용 시간 (시간)
+   * @param {number} expectedMinutes - 기대 사용 시간 (분)
+   * @param {number} actualHours - 실제 사용 시간 (시간)
+   * @param {number} actualMinutes - 실제 사용 시간 (분)
    * @returns {object} 계산 결과
    */
-  calculateBreakEven(monthlyFee, weeklyHours, weeklyMinutes = 0) {
+  calculateUtilization(
+    monthlyFee,
+    expectedHours,
+    expectedMinutes = 0,
+    actualHours,
+    actualMinutes = 0,
+  ) {
     // 입력값 검증
-    if (monthlyFee < 0 || weeklyHours < 0 || weeklyMinutes < 0) {
+    if (
+      monthlyFee < 0 ||
+      expectedHours < 0 ||
+      expectedMinutes < 0 ||
+      actualHours < 0 ||
+      actualMinutes < 0
+    ) {
       throw new Error("입력값은 0 이상이어야 합니다.");
     }
 
-    // 주간 총 시간을 시간 단위로 통합 (분을 시간으로 변환)
-    const weeklyTotalHours = weeklyHours + weeklyMinutes / 60;
+    // 시간 단위로 통합 (분을 시간으로 변환)
+    const expectedTotalHours = expectedHours + expectedMinutes / 60;
+    const actualTotalHours = actualHours + actualMinutes / 60;
 
-    // 월 총 사용 시간 계산 (4주 기준)
-    const monthlyHours = weeklyTotalHours * 4;
+    // 기대 사용 시간이 0이면 예외 처리
+    if (expectedTotalHours === 0) {
+      throw new Error("기대 사용 시간은 0보다 커야 합니다.");
+    }
+
+    // 실제 사용 시간이 0인 경우 처리
+    if (actualTotalHours === 0) {
+      return {
+        monthlyFee: monthlyFee,
+        expectedTotalHours: expectedTotalHours,
+        actualTotalHours: actualTotalHours,
+        utilizationRate: 0,
+        costPerHour: 0,
+        timestamp: new Date(),
+      };
+    }
+
+    // 활용률 계산 (%)
+    const utilizationRate =
+      Math.round((actualTotalHours / expectedTotalHours) * 10000) / 100;
 
     // 시간당 비용 계산
-    const hourlyRate =
-      monthlyHours > 0
-        ? Math.round((monthlyFee / monthlyHours) * 100) / 100
-        : 0;
+    const costPerHour = Math.round((monthlyFee / actualTotalHours) * 100) / 100;
 
     return {
       monthlyFee: monthlyFee,
-      weeklyHours: weeklyHours,
-      weeklyMinutes: weeklyMinutes,
-      weeklyTotalHours: weeklyTotalHours,
-      monthlyHours: monthlyHours,
-      hourlyRate: hourlyRate,
+      expectedTotalHours: expectedTotalHours,
+      actualTotalHours: actualTotalHours,
+      utilizationRate: utilizationRate,
+      costPerHour: costPerHour,
       timestamp: new Date(),
     };
   }
 
   /**
-   * 의사결정 메시지 생성
-   * @param {object} result - 계산 결과
-   * @returns {string} 의사결정 지원 메시지
+   * 활용률 기반 의사결정 메시지 생성
+   * @param {object} result - calculateUtilization 결과
+   * @returns {string} 의사결정 메시지
    */
   generateDecisionMessage(result) {
-    const { monthlyFee, monthlyHours, hourlyRate } = result;
+    const { utilizationRate, expectedTotalHours, actualTotalHours } = result;
 
-    // 사용 시간이 0일 경우
-    if (monthlyHours === 0) {
+    if (actualTotalHours === 0) {
       return `
-                <strong>사용 시간이 0입니다.</strong>
-                <br>월 ${monthlyFee.toLocaleString()}원을 지출하고 있지만 사용하지 않고 있습니다.
-                <br>구독을 취소하는 것을 추천합니다.
-            `;
+        <strong style="color: #dc3545;">🔴 사용 시간이 0입니다.</strong>
+        <br><br>
+        기대했던 ${this.formatHours(expectedTotalHours)}의 사용이 전혀 이루어지지 않았습니다.
+        <br>구독 서비스의 해지를 검토하는 것을 강력히 권장합니다.
+      `;
     }
 
-    let message = `
-            <strong>월 ${monthlyFee.toLocaleString()}원 구독 분석</strong>
-            <br><br>
-            <strong>시간당 비용: ${hourlyRate.toLocaleString()}원/시간</strong>
-            <br>
-        `;
-
-    // 시간당 비용에 따른 의사결정
-    if (hourlyRate < 1000) {
-      message += `
-                ✅ <strong>매우 경제적입니다.</strong>
-                <br>시간당 1,000원 미만으로 매우 저렴한 가격대입니다.
-                <br>현재 사용 패턴을 유지하면 가치 있는 구독입니다.
-            `;
-    } else if (hourlyRate < 3000) {
-      message += `
-                🟢 <strong>경제적입니다.</strong>
-                <br>시간당 3,000원 미만으로 일반적인 가격대입니다.
-                <br>사용 시간을 조금 더 늘릴 수 있으면 더욱 가치 있습니다.
-            `;
-    } else if (hourlyRate < 5000) {
-      message += `
-                🟡 <strong>보통입니다.</strong>
-                <br>시간당 5,000원 미만이지만 사용 효율을 고려해야 합니다.
-                <br>월간 사용 시간을 늘릴 수 있는지 검토하세요.
-            `;
-    } else {
-      message += `
-                🔴 <strong>시간당 비용이 높습니다.</strong>
-                <br>시간당 ${hourlyRate.toLocaleString()}원으로 비용 효율이 낮습니다.
-                <br>사용 시간을 더 늘리거나 구독 취소를 고려하세요.
-            `;
+    if (utilizationRate >= 100) {
+      return `
+        <strong style="color: #28a745;">✅ 기대 수준 이상으로 충족했습니다.</strong>
+        <br><br>
+        예상했던 사용량${this.formatHours(expectedTotalHours)}을(를) ${utilizationRate.toFixed(0)}% 달성하신 상태입니다.
+        <br>현재 사용 패턴을 유지하시는 것을 권장합니다.
+      `;
     }
 
-    return message;
+    if (utilizationRate >= 50) {
+      return `
+        <strong style="color: #ffc107;">🟡 양호하지만 개선 여지가 있습니다.</strong>
+        <br><br>
+        기대 사용량의 ${utilizationRate.toFixed(0)}%만 달성한 상태입니다.
+        <br>앞으로 ${this.formatHours(expectedTotalHours - actualTotalHours)}를 더 활용하면 구독 가치를 더욱 높일 수 있습니다.
+      `;
+    }
+
+    return `
+      <strong style="color: #dc3545;">🔴 사용량이 기대 수준 이하입니다.</strong>
+      <br><br>
+      기대 사용량의 겨우 ${utilizationRate.toFixed(0)}%만 사용 중입니다.
+      <br>구독 해지를 검토하거나, 향후 사용 계획을 재검토하기를 강력히 권장합니다.
+    `;
+  }
+
+  /**
+   * 숫자를 한국 원화 형식으로 포맷
+   * @param {number} value - 숫자값
+   * @returns {string} 포맷된 문자열
+   */
+  formatCurrency(value) {
+    return `${Math.round(value).toLocaleString("ko-KR")}`;
+  }
+
+  /**
+   * 시간을 포맷 (시간:분 형식)
+   * @param {number} hours - 시간 (소수점 포함 가능)
+   * @returns {string} 포맷된 문자열 "X시간 Y분"
+   */
+  formatHours(hours) {
+    if (hours === 0) return "0시간";
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    if (m === 0) return `${h}시간`;
+    return `${h}시간 ${m}분`;
   }
 
   /**
@@ -120,23 +162,5 @@ class SubscriptionCalculator {
       console.warn("로컬 저장소 접근 불가:", e);
       return [];
     }
-  }
-
-  /**
-   * 숫자를 한국 원화 형식으로 포맷
-   * @param {number} value - 숫자값
-   * @returns {string} 포맷된 문자열
-   */
-  formatCurrency(value) {
-    return `${Math.round(value).toLocaleString("ko-KR")}`;
-  }
-
-  /**
-   * 시간을 포맷 (소수점 처리)
-   * @param {number} hours - 시간
-   * @returns {string} 포맷된 문자열
-   */
-  formatHours(hours) {
-    return hours % 1 === 0 ? hours.toString() : hours.toFixed(1);
   }
 }
