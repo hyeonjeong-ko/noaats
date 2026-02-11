@@ -79,12 +79,12 @@ actualTimeInputModeRadios.forEach((radio) => {
     if (this.value === "weekly") {
       actualTimeSubLabel.textContent =
         "디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)";
-      actualHoursInput.max = "168";
+      actualHoursInput.max = "999";
       actualHoursInput.placeholder = "0";
     } else {
       actualTimeSubLabel.textContent =
         "지난 한 달, 실제로 이 서비스를 얼마나 사용했나요?";
-      actualHoursInput.max = "31";
+      actualHoursInput.max = "999";
       actualHoursInput.placeholder = "0";
     }
 
@@ -159,9 +159,6 @@ form.addEventListener("submit", function (e) {
 
     // 결과 표시
     displayResults(result);
-
-    // 결과 저장
-    calculator.saveResult(result);
   } catch (error) {
     alert("계산 중 오류가 발생했습니다: " + error.message);
   }
@@ -359,11 +356,11 @@ comparisonActualTimeInputModeRadios.forEach((radio) => {
     if (this.value === "weekly") {
       comparisonActualTimeSubLabel.textContent =
         "디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)";
-      comparisonActualHours.max = "168";
+      comparisonActualHours.max = "999";
     } else {
       comparisonActualTimeSubLabel.textContent =
         "지난 한 달, 실제로 이 서비스를 얼마나 사용했나요?";
-      comparisonActualHours.max = "31";
+      comparisonActualHours.max = "999";
     }
 
     // 입력값 초기화

@@ -284,32 +284,9 @@ class SubscriptionCalculator {
     if (m === 0) return `${h}시간`;
     return `${h}시간 ${m}분`;
   }
+}
 
-  /**
-   * 계산 결과 저장 (localStorage)
-   * @param {object} result - 계산 결과
-   */
-  saveResult(result) {
-    try {
-      const history = this.getHistory();
-      history.push(result);
-      localStorage.setItem("subscriptionHistory", JSON.stringify(history));
-    } catch (e) {
-      console.warn("로컬 저장소 사용 불가:", e);
-    }
-  }
-
-  /**
-   * 계산 이력 조회
-   * @returns {array} 계산 이력
-   */
-  getHistory() {
-    try {
-      const history = localStorage.getItem("subscriptionHistory");
-      return history ? JSON.parse(history) : [];
-    } catch (e) {
-      console.warn("로컬 저장소 접근 불가:", e);
-      return [];
-    }
-  }
+// Node.js 환경 (Jest 테스트)에서 export
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = SubscriptionCalculator;
 }
