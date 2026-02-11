@@ -6,6 +6,25 @@
 // 전역 계산기 인스턴스
 const calculator = new SubscriptionCalculator();
 
+// ===== 탭 관련 =====
+const tabButtons = document.querySelectorAll(".tab-button");
+const tabContents = document.querySelectorAll(".tab-content");
+
+// 탭 네비게이션 이벤트 리스너
+tabButtons.forEach((button) => {
+  button.addEventListener("click", function () {
+    const targetTab = this.getAttribute("data-tab");
+
+    // 모든 탭 버튼과 콘텐츠에서 active 제거
+    tabButtons.forEach((btn) => btn.classList.remove("active"));
+    tabContents.forEach((content) => content.classList.remove("active"));
+
+    // 선택한 탭에 active 추가
+    this.classList.add("active");
+    document.getElementById(`${targetTab}-tab`).classList.add("active");
+  });
+});
+
 // DOM 요소들 (입력)
 const form = document.getElementById("calculatorForm");
 const monthlyFeeInput = document.getElementById("monthlyFee");
@@ -292,3 +311,276 @@ lifestyleItemSelector.addEventListener("change", function () {
     lifestyleEquivalenceMessageElement.innerHTML = lifestyleEquivalenceMessage;
   }
 });
+
+// ===== 복수 비교 탭 관련 =====
+// 복수 비교 데이터 저장소
+let comparisonSubscriptions = [];
+
+// 복수 비교 - 실제 사용시간 입력 모드
+let comparisonActualTimeMode = "weekly"; // "weekly" 또는 "monthly"
+
+// 복수 비교 라디오 버튼 참조
+const comparisonActualTimeInputModeRadios = document.querySelectorAll(
+  'input[name="comparisonActualTimeInputMode"]',
+);
+const comparisonActualTimeSubLabel = document.getElementById(
+  "comparisonActualTimeSubLabel",
+);
+
+// DOM 요소들 (복수 비교)
+const btnAddSubscription = document.getElementById("btnAddSubscription");
+const comparisonServiceName = document.getElementById("comparisonServiceName");
+const comparisonServiceFee = document.getElementById("comparisonServiceFee");
+const comparisonExpectedHours = document.getElementById(
+  "comparisonExpectedHours",
+);
+const comparisonExpectedMinutes = document.getElementById(
+  "comparisonExpectedMinutes",
+);
+const comparisonActualHours = document.getElementById("comparisonActualHours");
+const comparisonActualMinutes = document.getElementById(
+  "comparisonActualMinutes",
+);
+const comparisonResults = document.getElementById("comparisonResults");
+const comparisonTableBody = document.getElementById("comparisonTableBody");
+const utilizationBars = document.getElementById("utilizationBars");
+const efficiencyAnalysis = document.getElementById("efficiencyAnalysis");
+const emptyComparisonMessage = document.getElementById(
+  "emptyComparisonMessage",
+);
+
+/**
+ * 복수 비교 - 실제 사용시간 입력 모드 변경 이벤트
+ */
+comparisonActualTimeInputModeRadios.forEach((radio) => {
+  radio.addEventListener("change", function () {
+    comparisonActualTimeMode = this.value;
+
+    if (this.value === "weekly") {
+      comparisonActualTimeSubLabel.textContent =
+        "디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)";
+      comparisonActualHours.max = "168";
+    } else {
+      comparisonActualTimeSubLabel.textContent =
+        "지난 한 달, 실제로 이 서비스를 얼마나 사용했나요?";
+      comparisonActualHours.max = "31";
+    }
+
+    // 입력값 초기화
+    comparisonActualHours.value = "";
+    comparisonActualMinutes.value = "";
+  });
+});
+
+/**
+ * 구독 서비스 추가 이벤트
+ */
+btnAddSubscription.addEventListener("click", function () {
+  const serviceName = comparisonServiceName.value.trim();
+  const serviceFee = parseFloat(comparisonServiceFee.value);
+  const expectedHours = parseFloat(comparisonExpectedHours.value) || 0;
+  const expectedMinutes = parseFloat(comparisonExpectedMinutes.value) || 0;
+  const actualHours = parseFloat(comparisonActualHours.value) || 0;
+  const actualMinutes = parseFloat(comparisonActualMinutes.value) || 0;
+
+  // 분을 시간으로 변환
+  const expectedTotalHours = expectedHours + expectedMinutes / 60;
+  let actualTotalHours = actualHours + actualMinutes / 60;
+
+  // 주간 입력일 경우 월간으로 변환 (X4)
+  if (comparisonActualTimeMode === "weekly") {
+    actualTotalHours = actualTotalHours * 4;
+  }
+
+  // 유효성 검사
+  if (!serviceName) {
+    alert("서비스명을 입력해주세요.");
+    return;
+  }
+
+  if (isNaN(serviceFee) || serviceFee < 0) {
+    alert("월 구독료를 올바르게 입력해주세요.");
+    return;
+  }
+
+  if (expectedTotalHours <= 0) {
+    alert("기대 사용시간을 0보다 크게 입력해주세요.");
+    return;
+  }
+
+  if (actualTotalHours < 0) {
+    alert("실제 사용시간을 올바르게 입력해주세요.");
+    return;
+  }
+
+  // 동일한 서비스명 확인
+  if (
+    comparisonSubscriptions.some(
+      (sub) => sub.serviceName.toLowerCase() === serviceName.toLowerCase(),
+    )
+  ) {
+    alert("이미 추가된 서비스입니다.");
+    comparisonServiceName.focus();
+    return;
+  }
+
+  // 활용률 계산
+  const utilizationRate = (actualTotalHours / expectedTotalHours) * 100;
+  const unusedCost = Math.max(
+    serviceFee * (1 - utilizationRate / 100),
+    0,
+  ).toFixed(0);
+
+  // 등급 부여
+  let grade = "C";
+  if (utilizationRate >= 100) {
+    grade = "A";
+  } else if (utilizationRate >= 50) {
+    grade = "B";
+  }
+
+  // 구독 데이터 추가
+  const subscription = {
+    id: Date.now(),
+    serviceName,
+    serviceFee,
+    expectedTotalHours,
+    actualTotalHours,
+    utilizationRate: parseFloat(utilizationRate.toFixed(1)),
+    unusedCost: parseInt(unusedCost),
+    grade,
+  };
+
+  comparisonSubscriptions.push(subscription);
+
+  // 입력 필드 초기화
+  comparisonServiceName.value = "";
+  comparisonServiceFee.value = "";
+  comparisonExpectedHours.value = "";
+  comparisonExpectedMinutes.value = "";
+  comparisonActualHours.value = "";
+  comparisonActualMinutes.value = "";
+  comparisonServiceName.focus();
+
+  // 결과 업데이트
+  updateComparisonResults();
+});
+
+/**
+ * 복수 비교 - Enter 키로 서비스 추가
+ */
+comparisonActualMinutes.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    btnAddSubscription.click();
+  }
+});
+
+/**
+ * 복수 비교 결과 업데이트
+ */
+function updateComparisonResults() {
+  if (comparisonSubscriptions.length === 0) {
+    comparisonResults.style.display = "none";
+    emptyComparisonMessage.style.display = "block";
+    return;
+  }
+
+  comparisonResults.style.display = "block";
+  emptyComparisonMessage.style.display = "none";
+
+  // 테이블 업데이트
+  updateComparisonTable();
+
+  // 막대 그래프 업데이트
+  updateUtilizationBars();
+
+  // 비효율 분석 업데이트
+  updateEfficiencyAnalysis();
+}
+
+/**
+ * 비교 테이블 업데이트
+ */
+function updateComparisonTable() {
+  comparisonTableBody.innerHTML = comparisonSubscriptions
+    .map((sub) => {
+      const gradeClass = `grade-${sub.grade.toLowerCase()}`;
+      return `
+        <tr>
+          <td>${sub.serviceName}</td>
+          <td>${sub.utilizationRate.toFixed(1)}%</td>
+          <td>${calculator.formatCurrency(sub.unusedCost)}원</td>
+          <td><span class="${gradeClass}">${sub.grade}</span></td>
+          <td>
+            <button class="btn-delete-service" onclick="deleteSubscription(${sub.id})">
+              삭제
+            </button>
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+/**
+ * 활용률 막대 그래프 업데이트
+ */
+function updateUtilizationBars() {
+  const maxUtilization = Math.max(
+    ...comparisonSubscriptions.map((s) => s.utilizationRate),
+    100,
+  );
+
+  utilizationBars.innerHTML = comparisonSubscriptions
+    .map((sub) => {
+      const percentage = (sub.utilizationRate / maxUtilization) * 100;
+      let barClass = "bar-fill low";
+      if (sub.utilizationRate >= 100) {
+        barClass = "bar-fill high";
+      } else if (sub.utilizationRate >= 50) {
+        barClass = "bar-fill medium";
+      }
+
+      return `
+        <div class="utilization-bar-item">
+          <div class="service-label">${sub.serviceName}</div>
+          <div class="bar-container">
+            <div class="${barClass}" style="width: ${percentage}%">
+              ${sub.utilizationRate.toFixed(1)}%
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+/**
+ * 비효율 분석 업데이트
+ */
+function updateEfficiencyAnalysis() {
+  // 가장 비효율적인 서비스 찾기
+  const leastEfficient = comparisonSubscriptions.reduce((prev, current) => {
+    return prev.utilizationRate < current.utilizationRate ? prev : current;
+  });
+
+  const annualUnusedCost = leastEfficient.unusedCost * 12;
+
+  efficiencyAnalysis.innerHTML = `
+    <h4>⚠️ 가장 비효율적인 구독</h4>
+    <p><strong>${leastEfficient.serviceName}</strong></p>
+    <p>활용률: ${leastEfficient.utilizationRate.toFixed(1)}%</p>
+    <p>월 낭비: ${calculator.formatCurrency(leastEfficient.unusedCost)}원</p>
+    <p>연간 낭비: ${calculator.formatCurrency(annualUnusedCost)}원</p>
+  `;
+}
+
+/**
+ * 구독 서비스 삭제
+ */
+function deleteSubscription(id) {
+  comparisonSubscriptions = comparisonSubscriptions.filter(
+    (sub) => sub.id !== id,
+  );
+  updateComparisonResults();
+}

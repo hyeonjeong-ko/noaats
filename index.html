@@ -16,207 +16,369 @@
       </header>
 
       <main>
-        <!-- 입력 섹션 -->
-        <section class="input-section">
-          <h2>📥 입력 정보</h2>
-          <form id="calculatorForm">
-            <div class="form-group">
-              <label for="monthlyFee">월 구독료 (원)</label>
-              <input
-                type="number"
-                id="monthlyFee"
-                placeholder="예: 9,900"
-                min="0"
-                step="1"
-                required
-              />
-            </div>
+        <!-- 탭 네비게이션 -->
+        <div class="tabs-navigation">
+          <button class="tab-button active" data-tab="single">단일 분석</button>
+          <button class="tab-button" data-tab="multiple">복수 비교</button>
+        </div>
 
-            <div class="form-group">
-              <label>📅 기대 사용 시간 (월)</label>
-              <p class="sub-label">
-                한 달에 이 서비스를 얼마나 사용할 것으로 예상하나요?
-              </p>
-              <div class="time-input-group">
-                <div class="time-input">
-                  <input
-                    type="number"
-                    id="expectedHours"
-                    placeholder="0"
-                    min="0"
-                    max="31"
-                    step="1"
-                    required
-                  />
-                  <span class="time-unit">시간</span>
-                </div>
-                <div class="time-input">
-                  <input
-                    type="number"
-                    id="expectedMinutes"
-                    placeholder="0"
-                    min="0"
-                    max="59"
-                    step="1"
-                  />
-                  <span class="time-unit">분</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>⏱️ 실제 사용 시간</label>
-              <div class="input-mode-selector">
-                <label class="mode-option">
-                  <input
-                    type="radio"
-                    name="actualTimeInputMode"
-                    value="weekly"
-                    checked
-                  />
-                  주간으로 입력 (X4)
-                  <span
-                    class="help-icon"
-                    data-tooltip="휴대폰 환경설정 > 디지털웰빙 및 자녀보호 기능에서 주간 사용 시간을 입력하세요"
-                    >?</span
-                  >
-                </label>
-                <label class="mode-option">
-                  <input
-                    type="radio"
-                    name="actualTimeInputMode"
-                    value="monthly"
-                  />
-                  월간으로 직접입력
-                </label>
+        <!-- 단일 분석 탭 -->
+        <div class="tab-content active" id="single-tab">
+          <!-- 입력 섹션 -->
+          <section class="input-section">
+            <h2>📥 입력 정보</h2>
+            <form id="calculatorForm">
+              <div class="form-group">
+                <label for="monthlyFee">월 구독료 (원)</label>
+                <input
+                  type="number"
+                  id="monthlyFee"
+                  placeholder="예: 9,900"
+                  min="0"
+                  step="1"
+                  required
+                />
               </div>
 
-              <p class="sub-label" id="actualTimeSubLabel">
-                디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)
-              </p>
-              <div class="time-input-group">
-                <div class="time-input">
-                  <input
-                    type="number"
-                    id="actualHours"
-                    placeholder="0"
-                    min="0"
-                    max="168"
-                    step="1"
-                    required
-                  />
-                  <span class="time-unit" id="actualHoursUnit">시간</span>
-                </div>
-                <div class="time-input">
-                  <input
-                    type="number"
-                    id="actualMinutes"
-                    placeholder="0"
-                    min="0"
-                    max="59"
-                    step="1"
-                  />
-                  <span class="time-unit">분</span>
+              <div class="form-group">
+                <label>📅 기대 사용 시간 (월)</label>
+                <p class="sub-label">
+                  한 달에 이 서비스를 얼마나 사용할 것으로 예상하나요?
+                </p>
+                <div class="time-input-group">
+                  <div class="time-input">
+                    <input
+                      type="number"
+                      id="expectedHours"
+                      placeholder="0"
+                      min="0"
+                      max="31"
+                      step="1"
+                      required
+                    />
+                    <span class="time-unit">시간</span>
+                  </div>
+                  <div class="time-input">
+                    <input
+                      type="number"
+                      id="expectedMinutes"
+                      placeholder="0"
+                      min="0"
+                      max="59"
+                      step="1"
+                    />
+                    <span class="time-unit">분</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button type="submit" class="btn-calculate">🔍 계산하기</button>
-          </form>
-        </section>
+              <div class="form-group">
+                <label>⏱️ 실제 사용 시간</label>
+                <div class="input-mode-selector">
+                  <label class="mode-option">
+                    <input
+                      type="radio"
+                      name="actualTimeInputMode"
+                      value="weekly"
+                      checked
+                    />
+                    주간으로 입력 (X4)
+                    <span
+                      class="help-icon"
+                      data-tooltip="휴대폰 환경설정 > 디지털웰빙 및 자녀보호 기능에서 주간 사용 시간을 입력하세요"
+                      >?</span
+                    >
+                  </label>
+                  <label class="mode-option">
+                    <input
+                      type="radio"
+                      name="actualTimeInputMode"
+                      value="monthly"
+                    />
+                    월간으로 직접입력
+                  </label>
+                </div>
 
-        <!-- 결과 섹션 -->
-        <section
-          class="result-section"
-          id="resultSection"
-          style="display: none"
-        >
-          <h2>� 분석 결과</h2>
-
-          <div class="result-grid">
-            <!-- 카드 1: 기본 정보 -->
-            <div class="result-card">
-              <h3>📋 기본 정보</h3>
-              <div class="result-item">
-                <span class="label">월 구독료</span>
-                <span class="value" id="resultFee">-</span>
+                <p class="sub-label" id="actualTimeSubLabel">
+                  디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)
+                </p>
+                <div class="time-input-group">
+                  <div class="time-input">
+                    <input
+                      type="number"
+                      id="actualHours"
+                      placeholder="0"
+                      min="0"
+                      max="168"
+                      step="1"
+                      required
+                    />
+                    <span class="time-unit" id="actualHoursUnit">시간</span>
+                  </div>
+                  <div class="time-input">
+                    <input
+                      type="number"
+                      id="actualMinutes"
+                      placeholder="0"
+                      min="0"
+                      max="59"
+                      step="1"
+                    />
+                    <span class="time-unit">분</span>
+                  </div>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="label">기대 사용</span>
-                <span class="value" id="resultExpectedHours">-</span>
-              </div>
-              <div class="result-item">
-                <span class="label">실제 사용</span>
-                <span class="value" id="resultActualHours">-</span>
-              </div>
-              <div class="result-item">
-                <span class="label">시간당 비용</span>
-                <span class="value" id="resultCostPerHour">-</span>
-              </div>
-            </div>
 
-            <!-- 카드 2: 활용률 분석 -->
-            <div class="result-card highlight">
-              <h3>📈 활용률</h3>
-              <div class="result-item main">
-                <span class="label">활용률</span>
-                <span class="value" id="resultUtilizationRate">-</span>
-              </div>
-              <div id="unusedCostMessage" class="decision-message">-</div>
-            </div>
+              <button type="submit" class="btn-calculate">🔍 계산하기</button>
+            </form>
+          </section>
 
-            <!-- 카드 3: 의사결정 지원 -->
-            <div class="result-card decision-card">
-              <h3>💡 의사결정</h3>
-              <div id="decisionMessage" class="decision-message">-</div>
-            </div>
-
-            <!-- 카드 4: 본전 회복 -->
-            <div class="result-card breakeven-card">
-              <h3>⏱️ 본전 회복</h3>
-              <div id="breakEvenMessage" class="decision-message">-</div>
-            </div>
-          </div>
-
-          <!-- v4: 생활소비 환산 섹션 -->
-          <div class="coffee-equivalence-section">
-            <h3>💰 생활소비 환산</h3>
-            <div class="lifestyle-selector">
-              <label for="lifestyleItem">환산 항목 선택:</label>
-              <select id="lifestyleItem">
-                <option value="coffee">☕ 커피 1잔 (3,500원)</option>
-                <option value="lunch">🍜 점심 한 끼 (9,500원)</option>
-                <option value="subway">🚇 지하철 1회 (1,500원)</option>
-                <option value="movie">🎬 영화 티켓 (13,000원)</option>
-                <option value="chicken">🍗 치킨 1마리 (21,000원)</option>
-              </select>
-            </div>
-            <div id="lifestyleEquivalenceMessage" class="decision-message">
-              -
-            </div>
-          </div>
-
-          <button
-            type="button"
-            class="btn-reset"
-            onclick="
-              document.getElementById('calculatorForm').reset();
-              document.getElementById('resultSection').style.display = 'none';
-            "
+          <!-- 결과 섹션 -->
+          <section
+            class="result-section"
+            id="resultSection"
+            style="display: none"
           >
-            🔄 다시 계산하기
-          </button>
-        </section>
+            <h2>� 분석 결과</h2>
 
-        <!-- 안내 섹션 -->
-        <section class="info-section">
-          <h2>ℹ️ 사용 가이드</h2>
-          <ul>
-            <li>월 구독료를 입력하세요</li>
-            <li>평균 주간 사용 시간을 입력하세요 (4주로 합산됩니다)</li>
-            <li>시간당 비용을 계산하여 구독 가치를 판단할 수 있습니다</li>
-          </ul>
-        </section>
+            <div class="result-grid">
+              <!-- 카드 1: 기본 정보 -->
+              <div class="result-card">
+                <h3>📋 기본 정보</h3>
+                <div class="result-item">
+                  <span class="label">월 구독료</span>
+                  <span class="value" id="resultFee">-</span>
+                </div>
+                <div class="result-item">
+                  <span class="label">기대 사용</span>
+                  <span class="value" id="resultExpectedHours">-</span>
+                </div>
+                <div class="result-item">
+                  <span class="label">실제 사용</span>
+                  <span class="value" id="resultActualHours">-</span>
+                </div>
+                <div class="result-item">
+                  <span class="label">시간당 비용</span>
+                  <span class="value" id="resultCostPerHour">-</span>
+                </div>
+              </div>
+
+              <!-- 카드 2: 활용률 분석 -->
+              <div class="result-card highlight">
+                <h3>📈 활용률</h3>
+                <div class="result-item main">
+                  <span class="label">활용률</span>
+                  <span class="value" id="resultUtilizationRate">-</span>
+                </div>
+                <div id="unusedCostMessage" class="decision-message">-</div>
+              </div>
+
+              <!-- 카드 3: 의사결정 지원 -->
+              <div class="result-card decision-card">
+                <h3>💡 의사결정</h3>
+                <div id="decisionMessage" class="decision-message">-</div>
+              </div>
+
+              <!-- 카드 4: 본전 회복 -->
+              <div class="result-card breakeven-card">
+                <h3>⏱️ 본전 회복</h3>
+                <div id="breakEvenMessage" class="decision-message">-</div>
+              </div>
+            </div>
+
+            <!-- v4: 생활소비 환산 섹션 -->
+            <div class="coffee-equivalence-section">
+              <h3>💰 생활소비 환산</h3>
+              <div class="lifestyle-selector">
+                <label for="lifestyleItem">환산 항목 선택:</label>
+                <select id="lifestyleItem">
+                  <option value="coffee">☕ 커피 1잔 (3,500원)</option>
+                  <option value="lunch">🍜 점심 한 끼 (9,500원)</option>
+                  <option value="subway">🚇 지하철 1회 (1,500원)</option>
+                  <option value="movie">🎬 영화 티켓 (13,000원)</option>
+                  <option value="chicken">🍗 치킨 1마리 (21,000원)</option>
+                </select>
+              </div>
+              <div id="lifestyleEquivalenceMessage" class="decision-message">
+                -
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn-reset"
+              onclick="
+                document.getElementById('calculatorForm').reset();
+                document.getElementById('resultSection').style.display = 'none';
+              "
+            >
+              🔄 다시 계산하기
+            </button>
+          </section>
+
+          <!-- 안내 섹션 -->
+          <section class="info-section">
+            <h2>ℹ️ 사용 가이드</h2>
+            <ul>
+              <li>월 구독료를 입력하세요</li>
+              <li>평균 주간 사용 시간을 입력하세요 (4주로 합산됩니다)</li>
+              <li>시간당 비용을 계산하여 구독 가치를 판단할 수 있습니다</li>
+            </ul>
+          </section>
+        </div>
+
+        <!-- 복수 비교 탭 -->
+        <div class="tab-content" id="multiple-tab">
+          <section class="comparison-section">
+            <h2>📊 구독 서비스 비교</h2>
+
+            <!-- 구독 서비스 추가 영역 -->
+            <div class="comparison-input-area">
+              <div class="subscription-input-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>서비스명</label>
+                    <input
+                      type="text"
+                      id="comparisonServiceName"
+                      placeholder="예: Netflix"
+                      maxlength="20"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>월 구독료 (원)</label>
+                    <input
+                      type="number"
+                      id="comparisonServiceFee"
+                      placeholder="0"
+                      min="0"
+                      step="1"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>기대 사용시간 (월)</label>
+                    <div class="time-input-group-comparison">
+                      <input
+                        type="number"
+                        id="comparisonExpectedHours"
+                        placeholder="0"
+                        min="0"
+                        step="1"
+                      />
+                      <span>시간</span>
+                      <input
+                        type="number"
+                        id="comparisonExpectedMinutes"
+                        placeholder="0"
+                        min="0"
+                        max="59"
+                        step="1"
+                      />
+                      <span>분</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>실제 사용시간</label>
+                    <div class="input-mode-selector-comparison">
+                      <label class="mode-option-comparison">
+                        <input
+                          type="radio"
+                          name="comparisonActualTimeInputMode"
+                          value="weekly"
+                          checked
+                        />
+                        주간으로 입력 (X4)
+                      </label>
+                      <label class="mode-option-comparison">
+                        <input
+                          type="radio"
+                          name="comparisonActualTimeInputMode"
+                          value="monthly"
+                        />
+                        월간으로 직접입력
+                      </label>
+                    </div>
+                    <p
+                      class="sub-label-comparison"
+                      id="comparisonActualTimeSubLabel"
+                    >
+                      디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)
+                    </p>
+                    <div class="time-input-group-comparison">
+                      <input
+                        type="number"
+                        id="comparisonActualHours"
+                        placeholder="0"
+                        min="0"
+                        step="1"
+                      />
+                      <span>시간</span>
+                      <input
+                        type="number"
+                        id="comparisonActualMinutes"
+                        placeholder="0"
+                        min="0"
+                        max="59"
+                        step="1"
+                      />
+                      <span>분</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-add-subscription"
+                  id="btnAddSubscription"
+                >
+                  + 추가
+                </button>
+              </div>
+            </div>
+
+            <!-- 비교 결과 테이블 -->
+            <div
+              class="comparison-results"
+              id="comparisonResults"
+              style="display: none"
+            >
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th>서비스명</th>
+                    <th>활용률</th>
+                    <th>미활용 비용</th>
+                    <th>등급</th>
+                    <th>삭제</th>
+                  </tr>
+                </thead>
+                <tbody id="comparisonTableBody">
+                  <!-- 동적으로 생성됨 -->
+                </tbody>
+              </table>
+
+              <!-- 활용률 막대 그래프 -->
+              <div class="comparison-chart" id="comparisonChart">
+                <h3>활용률 비교</h3>
+                <div id="utilizationBars">
+                  <!-- 동적으로 생성됨 -->
+                </div>
+              </div>
+
+              <!-- 비효율 분석 -->
+              <div class="efficiency-analysis" id="efficiencyAnalysis">
+                <!-- 동적으로 생성됨 -->
+              </div>
+            </div>
+
+            <div id="emptyComparisonMessage" class="empty-message">
+              서비스를 추가하여 비교를 시작하세요
+            </div>
+          </section>
+        </div>
       </main>
 
       <footer>
