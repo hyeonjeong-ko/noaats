@@ -441,6 +441,53 @@ footer {
   margin-bottom: 10px;
 }
 
+/* 도움말 아이콘 스타일 */
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  background-color: #667eea;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: help;
+  position: relative;
+}
+
+.help-icon:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: normal;
+  max-width: 200px;
+  width: 200px;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.help-icon:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 119%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #333;
+  z-index: 1000;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .result-grid {
@@ -471,5 +518,9 @@ footer {
 
   .result-item.main .value {
     font-size: 28px;
+  }
+
+  .help-icon {
+    font-size: 12px;
   }
 }
