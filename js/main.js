@@ -31,10 +31,14 @@ const decisionMessageElement = document.getElementById("decisionMessage");
 const unusedCostMessageElement = document.getElementById("unusedCostMessage");
 const breakEvenMessageElement = document.getElementById("breakEvenMessage");
 
-// v4 추가: DOM 요소들 (커피 환산)
-const coffeeEquivalenceMessageElement = document.getElementById(
-  "coffeeEquivalenceMessage",
+// v4 추가: DOM 요소들 (생활소비 환산)
+const lifestyleItemSelector = document.getElementById("lifestyleItem");
+const lifestyleEquivalenceMessageElement = document.getElementById(
+  "lifestyleEquivalenceMessage",
 );
+
+// 전역 계산 결과 저장 (드롭다운 변경 시 사용)
+let lastCalculationResult = null;
 
 /**
  * 폼 제출 이벤트 핸들러
@@ -145,10 +149,12 @@ function displayResults(result) {
   const breakEvenMessage = calculator.generateBreakEvenSimulator(result);
   breakEvenMessageElement.innerHTML = breakEvenMessage;
 
-  // v4 추가: 커피 환산 메시지 생성 및 표시
-  const coffeeEquivalenceMessage =
-    calculator.generateCoffeeEquivalenceMessage(result);
-  coffeeEquivalenceMessageElement.innerHTML = coffeeEquivalenceMessage;
+  // v4 추가: 생활소비 환산 메시지 생성 및 표시
+  lastCalculationResult = result;
+  const selectedItem = lifestyleItemSelector.value || "coffee";
+  const lifestyleEquivalenceMessage =
+    calculator.generateLifestyleEquivalenceMessage(result, selectedItem);
+  lifestyleEquivalenceMessageElement.innerHTML = lifestyleEquivalenceMessage;
 
   // 활용률에 따른 스타일 적용
   applyUtilizationStyle(result.utilizationRate);
@@ -223,5 +229,20 @@ actualMinutesInput.addEventListener("focus", function () {
 actualMinutesInput.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     form.dispatchEvent(new Event("submit"));
+  }
+});
+
+/**
+ * v4: 생활소비 환산 항목 선택 이벤트
+ */
+lifestyleItemSelector.addEventListener("change", function () {
+  if (lastCalculationResult) {
+    const selectedItem = this.value;
+    const lifestyleEquivalenceMessage =
+      calculator.generateLifestyleEquivalenceMessage(
+        lastCalculationResult,
+        selectedItem,
+      );
+    lifestyleEquivalenceMessageElement.innerHTML = lifestyleEquivalenceMessage;
   }
 });

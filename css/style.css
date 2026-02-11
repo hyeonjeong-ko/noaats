@@ -329,7 +329,7 @@ input[type="number"]:focus {
   background: #f8d7da;
 }
 
-/* v4: 커피 환산 섹션 */
+/* v4: 생활소비 환산 섹션 */
 .coffee-equivalence-section {
   background: linear-gradient(135deg, #a8956c15 0%, #d4a37415 100%);
   border-left: 4px solid #8b6f47;
@@ -342,6 +342,42 @@ input[type="number"]:focus {
   color: #8b6f47;
   font-weight: 700;
   margin-bottom: 12px;
+}
+
+.lifestyle-selector {
+  margin-bottom: 15px;
+}
+
+.lifestyle-selector label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.lifestyle-selector select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #333;
+  background: white;
+  cursor: pointer;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.lifestyle-selector select:hover {
+  border-color: #667eea;
+}
+
+.lifestyle-selector select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
 }
 
 /* 정보 섹션 */

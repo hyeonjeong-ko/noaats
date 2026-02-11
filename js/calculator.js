@@ -4,8 +4,12 @@
  */
 
 class SubscriptionCalculator {
-  // 생활소비 기준가 (커피 1잔)
+  // 생활소비 기준가 (다중 항목)
   COFFEE_PRICE = 3500;
+  CHICKEN_PRICE = 21000;
+  MOVIE_PRICE = 13000;
+  LUNCH_PRICE = 9500;
+  SUBWAY_PRICE = 1500;
   /**
    * 활용률 기반 손익분기 계산 (v2)
    * 공식: 활용률 = 실제 사용 시간 ÷ 기대 사용 시간 × 100%
@@ -205,21 +209,58 @@ class SubscriptionCalculator {
   }
 
   /**
-   * v4: 커피 환산 메시지 생성
+   * v4: 생활소비 항목 목록 반환
+   * @returns {object} 생활소비 항목과 가격
+   */
+  getLifestyleItems() {
+    return {
+      coffee: { name: "☕ 커피 1잔", price: this.COFFEE_PRICE },
+      chicken: { name: "🍗 치킨 1마리", price: this.CHICKEN_PRICE },
+      movie: { name: "🎬 영화 티켓", price: this.MOVIE_PRICE },
+      lunch: { name: "🍜 점심 한 끼", price: this.LUNCH_PRICE },
+      subway: { name: "🚇 지하철 1회", price: this.SUBWAY_PRICE },
+    };
+  }
+
+  /**
+   * v4: 선택된 생활소비 항목으로 환산 메시지 생성
+   * @param {object} result - calculateUtilization 결과
+   * @param {string} itemKey - 선택된 항목 키 (coffee, chicken, movie, lunch, subway)
+   * @returns {string} 생활소비 환산 메시지
+   */
+  generateLifestyleEquivalenceMessage(result, itemKey = "coffee") {
+    const items = this.getLifestyleItems();
+    const item = items[itemKey];
+
+    if (!item) {
+      return "<em>항목을 선택해주세요.</em>";
+    }
+
+    const monthlyEquivalent = result.monthlyFee / item.price;
+    const unusedEquivalent = result.unusedCost / item.price;
+
+    // 이모지와 상품명 분리
+    const parts = item.name.split(" ");
+    const emoji = parts[0];
+    const product = parts[1];
+
+    return `
+      <strong>월 구독료 환산:</strong> ${emoji} ${product} <strong>${monthlyEquivalent.toFixed(1)}개</strong>
+      <br>
+      <strong>낭비된 가치:</strong> ${emoji} ${product} <strong>${unusedEquivalent.toFixed(1)}개</strong>
+      <br><br>
+      <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+      이번 달 낭비한 것은 ${emoji} ${product} 약 ${unusedEquivalent.toFixed(1)}개입니다.</em>
+    `;
+  }
+
+  /**
+   * v4: 커피 환산 메시지 생성 (하위호환성)
    * @param {object} result - calculateUtilization 결과
    * @returns {string} 커피 환산 메시지
    */
   generateCoffeeEquivalenceMessage(result) {
-    const { coffeeEquivalent, unusedCoffeeCups } = result;
-
-    return `
-      <strong>월 구독료 환산:</strong> ☕ ${coffeeEquivalent.toFixed(1)}잔
-      <br>
-      <strong>낭비된 가치:</strong> ☕ ${unusedCoffeeCups.toFixed(1)}잔
-      <br><br>
-      <em>이 구독은 매달 커피 약 ${coffeeEquivalent.toFixed(1)}잔에 해당하며,<br>
-      이번 달 약 ${unusedCoffeeCups.toFixed(1)}잔의 커피를 낭비한 셈입니다.</em>
-    `;
+    return this.generateLifestyleEquivalenceMessage(result, "coffee");
   }
 
   /**

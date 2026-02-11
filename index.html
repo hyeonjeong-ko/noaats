@@ -153,10 +153,22 @@
             </div>
           </div>
 
-          <!-- v4: 커피 환산 섹션 -->
+          <!-- v4: 생활소비 환산 섹션 -->
           <div class="coffee-equivalence-section">
-            <h3>☕ 생활소비 환산</h3>
-            <div id="coffeeEquivalenceMessage" class="decision-message">-</div>
+            <h3>💰 생활소비 환산</h3>
+            <div class="lifestyle-selector">
+              <label for="lifestyleItem">환산 항목 선택:</label>
+              <select id="lifestyleItem">
+                <option value="coffee">☕ 커피 1잔 (3,500원)</option>
+                <option value="lunch">🍜 점심 한 끼 (9,500원)</option>
+                <option value="subway">🚇 지하철 1회 (1,500원)</option>
+                <option value="movie">🎬 영화 티켓 (13,000원)</option>
+                <option value="chicken">🍗 치킨 1마리 (21,000원)</option>
+              </select>
+            </div>
+            <div id="lifestyleEquivalenceMessage" class="decision-message">
+              -
+            </div>
           </div>
 
           <button
