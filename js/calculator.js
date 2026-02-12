@@ -271,7 +271,7 @@ class SubscriptionCalculator {
       message += `
         <strong>미활용 가치:</strong> ${emoji} ${product} <strong>${unusedEquivalent.toFixed(1)}개</strong>
         <br><br>
-        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}잔의 비용입니다.<br>
         이번 달 ${emoji} ${product} 약 ${unusedEquivalent.toFixed(1)}개의 가치가 충분히 활용되지 않았습니다.</em>
       `;
     } else if (result.surplusValue > 0) {
@@ -280,14 +280,14 @@ class SubscriptionCalculator {
       message += `
         <strong>초과 이득:</strong> ${emoji} ${product} <strong>+${surplusEquivalent.toFixed(1)}개</strong>
         <br><br>
-        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}잔의 비용입니다.<br>
         이번 달 ${emoji} ${product} 약 ${surplusEquivalent.toFixed(1)}개의 추가 가치를 더 얻었습니다.</em>
       `;
     } else {
       // ⚪ 본전 구간 (활용률 = 100%)
       message += `
         <br>
-        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}잔의 비용입니다.<br>
         이번 달 정확히 본전을 맞추셨습니다! ✨</em>
       `;
     }

@@ -88,6 +88,42 @@ const lifestyleEquivalenceMessageElement = document.getElementById(
 let lastCalculationResult = null;
 
 /**
+ * 구독 서비스 타입 라디오 버튼 변경 이벤트 핸들러
+ */
+const subscriptionTypeRadios = document.querySelectorAll(
+  'input[name="subscriptionType"]',
+);
+
+subscriptionTypeRadios.forEach((radio) => {
+  radio.addEventListener("change", function () {
+    // 모든 입력 필드 초기화
+    monthlyFeeInput.value = "";
+    expectedHoursInput.value = "";
+    expectedMinutesInput.value = "";
+    actualHoursInput.value = "";
+    actualMinutesInput.value = "";
+
+    // 콘텐츠형이 아닌 경우 혜택형/용량형 필드도 초기화
+    document.querySelectorAll('input[name="benefitType"]').forEach((cb) => {
+      cb.checked = false;
+    });
+    document
+      .querySelectorAll(
+        '[id^="benefit"][id$="Count"], [id^="benefit"][id$="Fee"], [id^="benefit"][id$="Total"], [id^="benefit"][id$="Value"]',
+      )
+      .forEach((input) => {
+        input.value = "";
+      });
+
+    document.getElementById("storageTotalCapacity").value = "";
+    document.getElementById("storageUsedCapacity").value = "";
+
+    // 월 구독료 입력 포커스
+    monthlyFeeInput.focus();
+  });
+});
+
+/**
  * 실제 사용 시간 입력 방식 변경 이벤트 핸들러
  */
 actualTimeInputModeRadios.forEach((radio) => {
@@ -362,10 +398,24 @@ function displayResults(result, type) {
     `;
   }
   if (breakEvenMessageElement) {
-    breakEvenMessageElement.innerHTML = `
-      <strong>의사결정</strong>
+    let breakEvenContent = `<strong>의사결정</strong>`;
+
+    // 콘텐츠형인 경우 본전 회복까지 필요한 시간 표시
+    if (
+      type === "content" &&
+      result.breakEvenHours !== undefined &&
+      result.breakEvenHours > 0
+    ) {
+      breakEvenContent += `
+        <p>⏱️ <strong>본전까지 추가 ${Math.ceil(result.breakEvenHours)}시간 필요</strong></p>
+      `;
+    }
+
+    breakEvenContent += `
       <p>${result.utilizationRate >= 100 ? "계속 유지하세요 ✅" : result.utilizationRate >= 50 ? "현재 수준 유지 권고 ⚠️" : "구독 해제를 고려해보세요 ❌"}</p>
     `;
+
+    breakEvenMessageElement.innerHTML = breakEvenContent;
   }
 
   // 활용률에 따른 스타일 적용
@@ -1136,23 +1186,25 @@ function updateComparisonTable() {
   comparisonTableBody.innerHTML = comparisonSubscriptions
     .map((sub, index) => {
       const gradeClass = `grade-${sub.grade.toLowerCase()}`;
-      <tr>
-        <td>${sub.serviceName}</td>
-        <td>${TYPE_LABELS_EMOJI[sub.type] || sub.type}</td>
-        <td>${sub.utilizationRate.toFixed(1)}%</td>
-        <td>${calculator.formatCurrency(sub.unusedCost)}원</td>
-        <td>
-          <span class="${gradeClass}">${sub.grade}</span>
-        </td>
-        <td>
-          <button
-            class="btn-delete-service"
-            onclick="deleteSubscription(${sub.id})"
-          >
-            삭제
-          </button>
-        </td>
-      </tr>;
+      return `
+        <tr>
+          <td>${sub.serviceName}</td>
+          <td>${TYPE_LABELS_EMOJI[sub.type] || sub.type}</td>
+          <td>${sub.utilizationRate.toFixed(1)}%</td>
+          <td>${calculator.formatCurrency(sub.unusedCost)}원</td>
+          <td>
+            <span class="${gradeClass}">${sub.grade}</span>
+          </td>
+          <td>
+            <button
+              class="btn-delete-service"
+              onclick="deleteSubscription(${sub.id})"
+            >
+              삭제
+            </button>
+          </td>
+        </tr>
+      `;
     })
     .join("");
 }
@@ -1179,10 +1231,11 @@ function updateUtilizationBars() {
       return `
         <div class="utilization-bar-item">
           <div class="service-label">${sub.serviceName}</div>
-          <div class="bar-container">
-            <div class="${barClass}" style="width: ${percentage}%">
-              ${sub.utilizationRate.toFixed(1)}%
+          <div class="bar-wrapper">
+            <div class="bar-container">
+              <div class="${barClass}" style="width: ${percentage}%"></div>
             </div>
+            <div class="bar-percentage">${sub.utilizationRate.toFixed(1)}%</div>
           </div>
         </div>
       `;

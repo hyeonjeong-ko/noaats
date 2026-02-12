@@ -113,8 +113,7 @@ class SubscriptionAnalyzer {
     return {
       type: this.constructor.name,
       monthlyFee: this.monthlyFee,
-      utilizationRate: utilization, // 소수점 형태 유지 (UI에서 퍼센트 처리)
-      utilizationPercent: Math.round(utilization * 10000) / 100, // 퍼센트 형태
+      utilizationRate: Math.round(utilization * 10000) / 100, // 퍼센트 형태 (0-100)
       unusedCost: unused,
       surplusValue: surplus,
       annualUnusedCost: this.calculateAnnualUnusedCost(),
@@ -126,6 +125,10 @@ class SubscriptionAnalyzer {
 }
 
 // ===== 타입 내보내기 =====
+if (typeof window !== "undefined") {
+  window.SubscriptionAnalyzer = SubscriptionAnalyzer;
+}
+
 if (typeof module !== "undefined" && module.exports) {
   module.exports = SubscriptionAnalyzer;
 }

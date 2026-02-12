@@ -820,6 +820,13 @@ footer {
   color: #333;
 }
 
+.bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
 .bar-container {
   flex: 1;
   height: 24px;
@@ -829,16 +836,17 @@ footer {
   position: relative;
 }
 
+.bar-percentage {
+  min-width: 45px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
 .bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #667eea, #764ba2);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 8px;
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
   transition: width 0.3s ease;
 }
 
