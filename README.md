@@ -124,7 +124,7 @@ subscription-break-even-app/
 ├── css/style.css              # 스타일시트
 ├── js/
 │   ├── main.js                # 단일/복수 분석 로직
-│   ├── calculator.js          # 레거시 계산 클래스
+│   ├── calculator.js          # 통화 포맷팅, 유틸리티 함수
 │   ├── SubscriptionAnalyzer.js          # 기본 추상 클래스
 │   ├── ContentConsumptionAnalyzer.js    # 콘텐츠형
 │   ├── BenefitConsumptionAnalyzer.js    # 혜택형
@@ -141,10 +141,6 @@ subscription-break-even-app/
 ## 기술 스택
 
 **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6+)
-
-- 클래스 기반 OOP
-- IIFE 패턴 (Module Scoping)
-- 브라우저/Node.js 듀얼 환경
 
 **Backend (Test)**: Node.js
 
