@@ -5,6 +5,8 @@
  * 입력: 월 구독료, 제공 용량, 사용 용량 (단위: KB, MB, GB, TB)
  */
 
+const SubscriptionAnalyzer = require("./SubscriptionAnalyzer.js");
+
 class StorageBasedAnalyzer extends SubscriptionAnalyzer {
   /**
    * @param {number} monthlyFee - 월 구독료 (원)

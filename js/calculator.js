@@ -56,6 +56,9 @@ class SubscriptionCalculator {
         actualTotalHours: actualTotalHours,
         utilizationRate: 0,
         costPerHour: 0,
+        unusedCost: monthlyFee, // 전체가 미활용
+        surplusValue: 0,
+        annualUnusedCost: monthlyFee * 12,
         timestamp: new Date(),
       };
     }

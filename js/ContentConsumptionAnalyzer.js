@@ -5,6 +5,8 @@
  * 입력: 월 구독료, 실제 사용 시간, 기대 사용 시간
  */
 
+const SubscriptionAnalyzer = require("./SubscriptionAnalyzer.js");
+
 class ContentConsumptionAnalyzer extends SubscriptionAnalyzer {
   /**
    * @param {number} monthlyFee - 월 구독료 (원)

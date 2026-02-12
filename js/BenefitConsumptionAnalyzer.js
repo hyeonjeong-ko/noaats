@@ -6,6 +6,8 @@
  * 혜택 유형: 무료배송, 할인쿠폰, 멤버십 전용 할인, 포인트 적립, 기타
  */
 
+const SubscriptionAnalyzer = require("./SubscriptionAnalyzer.js");
+
 class BenefitConsumptionAnalyzer extends SubscriptionAnalyzer {
   /**
    * @param {number} monthlyFee - 월 구독료 (원)
@@ -125,12 +127,21 @@ class BenefitConsumptionAnalyzer extends SubscriptionAnalyzer {
   getAnalysisResult() {
     const base = super.getAnalysisResult();
     const { savings } = this.calculateBenefitSavings();
+    const actualValue = this.calculateActualValue();
 
     return {
       ...base,
+      actualValue: actualValue,
       benefitTypes: this.benefitTypes,
       benefitSavings: savings,
       breakEvenSavings: this.calculateBreakevenSavings(),
+      breakEvenUsage:
+        this.calculateBreakevenSavings() > 0
+          ? Math.ceil(
+              this.calculateBreakevenSavings() /
+                (this.calculateActualValue() || 1),
+            )
+          : 0,
     };
   }
 }
