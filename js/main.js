@@ -6,6 +6,24 @@
 // 전역 계산기 인스턴스
 const calculator = new SubscriptionCalculator();
 
+// ===== 전역 상수 =====
+const TYPE_LABELS_EMOJI = {
+  content: "📺 콘텐츠형",
+  benefit: "🎁 혜택형",
+  storage: "💾 용량형",
+};
+
+const TYPE_LABELS_SIMPLE = {
+  content: "콘텐츠형",
+  benefit: "혜택형",
+  storage: "용량형",
+};
+
+const UTILIZATION_THRESHOLDS = {
+  high: 100,
+  medium: 50,
+};
+
 // ===== 탭 관련 =====
 const tabButtons = document.querySelectorAll(".tab-button");
 const tabContents = document.querySelectorAll(".tab-content");
@@ -316,8 +334,7 @@ function displayResults(result, type) {
   }
 
   // 공통 결과 메시지
-  const typeLabel =
-    type === "content" ? "콘텐츠형" : type === "benefit" ? "혜택형" : "꼭량형";
+  const typeLabel = TYPE_LABELS_SIMPLE[type] || "알 수 없음";
 
   // 미활용 비용 또는 초과 가치 표시
   let costMessage = "";
@@ -532,45 +549,51 @@ function updateComparisonBenefitFields() {
 }
 
 /**
+ * Helper: 입력 필드에 값 설정 후 포커스
+ */
+function setInputValueAndFocus(elementId, value) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.value = value;
+    element.focus();
+  }
+}
+
+/**
  * 단일 분석 - 무료배송 배송비 기본값 제안
  */
 function suggestShippingFee() {
-  const feeInput = document.getElementById("benefitShippingFee");
-  feeInput.value = "3000";
-  feeInput.focus();
+  setInputValueAndFocus("benefitShippingFee", "3000");
 }
 
 /**
  * 복수 비교 - 무료배송 배송비 기본값 제안
  */
 function suggestComparisonShippingFee() {
-  const feeInput = document.getElementById("comparisonBenefitShippingFee");
-  feeInput.value = "3000";
-  feeInput.focus();
+  setInputValueAndFocus("comparisonBenefitShippingFee", "3000");
+}
+
+/**
+ * Helper: 여러 입력 필드에 자동 선택 기능 추가
+ */
+function attachAutoSelectToInputs(inputs) {
+  inputs.forEach((input) => {
+    input.addEventListener("focus", function () {
+      this.select();
+    });
+  });
 }
 
 /**
  * 입력 필드 포커스 시 자동 선택
  */
-monthlyFeeInput.addEventListener("focus", function () {
-  this.select();
-});
-
-expectedHoursInput.addEventListener("focus", function () {
-  this.select();
-});
-
-expectedMinutesInput.addEventListener("focus", function () {
-  this.select();
-});
-
-actualHoursInput.addEventListener("focus", function () {
-  this.select();
-});
-
-actualMinutesInput.addEventListener("focus", function () {
-  this.select();
-});
+attachAutoSelectToInputs([
+  monthlyFeeInput,
+  expectedHoursInput,
+  expectedMinutesInput,
+  actualHoursInput,
+  actualMinutesInput,
+]);
 
 /**
  * Enter 키로도 계산 가능하도록
@@ -1110,29 +1133,26 @@ function updateComparisonResults() {
  * 비교 테이블 업데이트 (유형 컬럼 추가)
  */
 function updateComparisonTable() {
-  const typeLabels = {
-    content: "📺 콘텐츠형",
-    benefit: "🎁 혜택형",
-    storage: "💾 용량형",
-  };
-
   comparisonTableBody.innerHTML = comparisonSubscriptions
     .map((sub, index) => {
       const gradeClass = `grade-${sub.grade.toLowerCase()}`;
-      return `
-        <tr>
-          <td>${sub.serviceName}</td>
-          <td>${typeLabels[sub.type] || sub.type}</td>
-          <td>${sub.utilizationRate.toFixed(1)}%</td>
-          <td>${calculator.formatCurrency(sub.unusedCost)}원</td>
-          <td><span class="${gradeClass}">${sub.grade}</span></td>
-          <td>
-            <button class="btn-delete-service" onclick="deleteSubscription(${sub.id})">
-              삭제
-            </button>
-          </td>
-        </tr>
-      `;
+      <tr>
+        <td>${sub.serviceName}</td>
+        <td>${TYPE_LABELS_EMOJI[sub.type] || sub.type}</td>
+        <td>${sub.utilizationRate.toFixed(1)}%</td>
+        <td>${calculator.formatCurrency(sub.unusedCost)}원</td>
+        <td>
+          <span class="${gradeClass}">${sub.grade}</span>
+        </td>
+        <td>
+          <button
+            class="btn-delete-service"
+            onclick="deleteSubscription(${sub.id})"
+          >
+            삭제
+          </button>
+        </td>
+      </tr>;
     })
     .join("");
 }
@@ -1192,17 +1212,11 @@ function updateEfficiencyAnalysis() {
     0,
   );
 
-  const typeLabels = {
-    content: "📺 콘텐츠형",
-    benefit: "🎁 혜택형",
-    storage: "💾 용량형",
-  };
-
   efficiencyAnalysis.innerHTML = `
     <h4>⚠️ 비효율성 분석</h4>
     <div class="efficiency-summary">
       <p><strong>가장 비효율적인 구독:</strong> ${leastEfficient.serviceName}</p>
-      <p class="efficiency-detail">유형: ${typeLabels[leastEfficient.type] || "알 수 없음"} | 활용률: ${leastEfficient.utilizationRate.toFixed(1)}%</p>
+      <p class="efficiency-detail">유형: ${TYPE_LABELS_EMOJI[leastEfficient.type] || "알 수 없음"} | 활용률: ${leastEfficient.utilizationRate.toFixed(1)}%</p>
       <p class="efficiency-highlight">월 손실: <strong>${calculator.formatCurrency(leastEfficient.unusedCost)}원</strong></p>
       <p class="efficiency-highlight">연간 손실: <strong>${calculator.formatCurrency(leastEfficient.annualUnusedCost)}원</strong></p>
     </div>
