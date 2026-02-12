@@ -27,7 +27,42 @@
           <!-- 입력 섹션 -->
           <section class="input-section">
             <h2>📥 입력 정보</h2>
-            <form id="calculatorForm">
+            <form id="calculatorForm" novalidate>
+              <!-- 구독 타입 선택 -->
+              <div class="form-group">
+                <label>🎯 구독 서비스 타입</label>
+                <div class="type-selector">
+                  <label class="type-option">
+                    <input
+                      type="radio"
+                      name="subscriptionType"
+                      value="content"
+                      checked
+                    />
+                    <span class="type-name">📺 콘텐츠형</span>
+                    <span class="type-desc">OTT, 음악, 유튜브</span>
+                  </label>
+                  <label class="type-option">
+                    <input
+                      type="radio"
+                      name="subscriptionType"
+                      value="benefit"
+                    />
+                    <span class="type-name">🎁 혜택형</span>
+                    <span class="type-desc">쿠팡, 멤버십</span>
+                  </label>
+                  <label class="type-option">
+                    <input
+                      type="radio"
+                      name="subscriptionType"
+                      value="storage"
+                    />
+                    <span class="type-name">💾 용량형</span>
+                    <span class="type-desc">클라우드 저장소</span>
+                  </label>
+                </div>
+              </div>
+
               <div class="form-group">
                 <label for="monthlyFee">월 구독료 (원)</label>
                 <input
@@ -36,94 +71,319 @@
                   placeholder="예: 9,900"
                   min="0"
                   step="1"
-                  required
                 />
               </div>
 
-              <div class="form-group">
-                <label>📅 기대 사용 시간 (월)</label>
-                <p class="sub-label">
-                  한 달에 이 서비스를 얼마나 사용할 것으로 예상하나요?
-                </p>
-                <div class="time-input-group">
-                  <div class="time-input">
-                    <input
-                      type="number"
-                      id="expectedHours"
-                      placeholder="0"
-                      min="0"
-                      step="1"
-                      required
-                    />
-                    <span class="time-unit">시간</span>
+              <!-- 📺 콘텐츠형 필드 -->
+              <div
+                id="content-fields"
+                class="type-fields"
+                style="display: block"
+              >
+                <div class="form-group">
+                  <label>📅 기대 사용 시간 (월)</label>
+                  <p class="sub-label">
+                    한 달에 이 서비스를 얼마나 사용할 것으로 예상하나요?
+                  </p>
+                  <div class="time-input-group">
+                    <div class="time-input">
+                      <input
+                        type="number"
+                        id="expectedHours"
+                        placeholder="0"
+                        min="0"
+                        step="1"
+                      />
+                      <span class="time-unit">시간</span>
+                    </div>
+                    <div class="time-input">
+                      <input
+                        type="number"
+                        id="expectedMinutes"
+                        placeholder="0"
+                        min="0"
+                        max="59"
+                        step="1"
+                      />
+                      <span class="time-unit">분</span>
+                    </div>
                   </div>
-                  <div class="time-input">
-                    <input
-                      type="number"
-                      id="expectedMinutes"
-                      placeholder="0"
-                      min="0"
-                      max="59"
-                      step="1"
-                    />
-                    <span class="time-unit">분</span>
+                </div>
+
+                <div class="form-group">
+                  <label>⏱️ 실제 사용 시간</label>
+                  <div class="input-mode-selector">
+                    <label class="mode-option">
+                      <input
+                        type="radio"
+                        name="actualTimeInputMode"
+                        value="weekly"
+                        checked
+                      />
+                      주간으로 입력 (X4)
+                      <span
+                        class="help-icon"
+                        data-tooltip="휴대폰 환경설정 > 디지털웰빙 및 자녀보호 기능에서 주간 사용 시간을 입력하세요"
+                        >?</span
+                      >
+                    </label>
+                    <label class="mode-option">
+                      <input
+                        type="radio"
+                        name="actualTimeInputMode"
+                        value="monthly"
+                      />
+                      월간으로 직접입력
+                    </label>
+                  </div>
+
+                  <p class="sub-label" id="actualTimeSubLabel">
+                    디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)
+                  </p>
+                  <div class="time-input-group">
+                    <div class="time-input">
+                      <input
+                        type="number"
+                        id="actualHours"
+                        placeholder="0"
+                        min="0"
+                        max="999"
+                        step="1"
+                      />
+                      <span class="time-unit" id="actualHoursUnit">시간</span>
+                    </div>
+                    <div class="time-input">
+                      <input
+                        type="number"
+                        id="actualMinutes"
+                        placeholder="0"
+                        min="0"
+                        max="59"
+                        step="1"
+                      />
+                      <span class="time-unit">분</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="form-group">
-                <label>⏱️ 실제 사용 시간</label>
-                <div class="input-mode-selector">
-                  <label class="mode-option">
-                    <input
-                      type="radio"
-                      name="actualTimeInputMode"
-                      value="weekly"
-                      checked
-                    />
-                    주간으로 입력 (X4)
-                    <span
-                      class="help-icon"
-                      data-tooltip="휴대폰 환경설정 > 디지털웰빙 및 자녀보호 기능에서 주간 사용 시간을 입력하세요"
-                      >?</span
-                    >
-                  </label>
-                  <label class="mode-option">
-                    <input
-                      type="radio"
-                      name="actualTimeInputMode"
-                      value="monthly"
-                    />
-                    월간으로 직접입력
-                  </label>
+              <!-- 🎁 혜택형 필드 -->
+              <div
+                id="benefit-fields"
+                class="type-fields"
+                style="display: none"
+              >
+                <div class="form-group">
+                  <label>🎯 혜택 유형 선택 (복수 선택 가능)</label>
+                  <p class="sub-label">
+                    이번 달에 사용한 혜택을 모두 선택해주세요
+                  </p>
+                  <div class="benefit-type-checkboxes">
+                    <label class="benefit-checkbox">
+                      <input
+                        type="checkbox"
+                        name="benefitType"
+                        value="shipping"
+                      />
+                      <span>📦 무료배송</span>
+                    </label>
+                    <label class="benefit-checkbox">
+                      <input
+                        type="checkbox"
+                        name="benefitType"
+                        value="coupon"
+                      />
+                      <span>🎟️ 할인 쿠폰</span>
+                    </label>
+                    <label class="benefit-checkbox">
+                      <input
+                        type="checkbox"
+                        name="benefitType"
+                        value="memberDiscount"
+                      />
+                      <span>👤 멤버십 전용 할인</span>
+                    </label>
+                    <label class="benefit-checkbox">
+                      <input
+                        type="checkbox"
+                        name="benefitType"
+                        value="points"
+                      />
+                      <span>⭐ 포인트 적립</span>
+                    </label>
+                    <label class="benefit-checkbox">
+                      <input type="checkbox" name="benefitType" value="other" />
+                      <span>🔧 기타</span>
+                    </label>
+                  </div>
                 </div>
 
-                <p class="sub-label" id="actualTimeSubLabel">
-                  디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)
-                </p>
-                <div class="time-input-group">
-                  <div class="time-input">
-                    <input
-                      type="number"
-                      id="actualHours"
-                      placeholder="0"
-                      min="0"
-                      max="168"
-                      step="1"
-                      required
-                    />
-                    <span class="time-unit" id="actualHoursUnit">시간</span>
+                <!-- 무료배송 입력 필드 -->
+                <div
+                  id="benefit-shipping-fields"
+                  class="benefit-detail-fields"
+                  style="display: none"
+                >
+                  <div class="benefit-section-header">📦 무료배송</div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>배송 사용 횟수 (월)</label>
+                      <input
+                        type="number"
+                        id="benefitShippingCount"
+                        placeholder="예: 12"
+                        min="0"
+                        step="1"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label>평균 배송비 (원)</label>
+                      <div class="input-with-button">
+                        <input
+                          type="number"
+                          id="benefitShippingFee"
+                          placeholder="3,000"
+                          min="0"
+                          step="100"
+                        />
+                        <button
+                          type="button"
+                          class="btn-suggest-value"
+                          onclick="suggestShippingFee()"
+                        >
+                          💡 3,000원
+                        </button>
+                      </div>
+                      <p class="input-hint">
+                        일반적으로 배송비는 2,500~3,500원입니다.
+                      </p>
+                    </div>
                   </div>
-                  <div class="time-input">
+                </div>
+
+                <!-- 할인 쿠폰 입력 필드 -->
+                <div
+                  id="benefit-coupon-fields"
+                  class="benefit-detail-fields"
+                  style="display: none"
+                >
+                  <div class="benefit-section-header">🎟️ 할인 쿠폰</div>
+                  <div class="form-group">
+                    <label>이번 달 할인 총액 (원)</label>
                     <input
                       type="number"
-                      id="actualMinutes"
-                      placeholder="0"
+                      id="benefitCouponTotal"
+                      placeholder="예: 15,000"
                       min="0"
-                      max="59"
-                      step="1"
+                      step="100"
                     />
-                    <span class="time-unit">분</span>
+                  </div>
+                </div>
+
+                <!-- 멤버십 전용 할인 입력 필드 -->
+                <div
+                  id="benefit-member-discount-fields"
+                  class="benefit-detail-fields"
+                  style="display: none"
+                >
+                  <div class="benefit-section-header">👤 멤버십 전용 할인</div>
+                  <div class="form-group">
+                    <label>이번 달 할인 총액 (원)</label>
+                    <input
+                      type="number"
+                      id="benefitMemberDiscountTotal"
+                      placeholder="예: 8,000"
+                      min="0"
+                      step="100"
+                    />
+                  </div>
+                </div>
+
+                <!-- 포인트 적립 입력 필드 -->
+                <div
+                  id="benefit-points-fields"
+                  class="benefit-detail-fields"
+                  style="display: none"
+                >
+                  <div class="benefit-section-header">⭐ 포인트 적립</div>
+                  <div class="form-group">
+                    <label>적립 포인트 원화 환산 (원)</label>
+                    <input
+                      type="number"
+                      id="benefitPointsValue"
+                      placeholder="예: 5,000"
+                      min="0"
+                      step="100"
+                    />
+                    <p class="input-hint">
+                      포인트를 원화로 환산한 가치를 입력하세요.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 기타 입력 필드 -->
+                <div
+                  id="benefit-other-fields"
+                  class="benefit-detail-fields"
+                  style="display: none"
+                >
+                  <div class="benefit-section-header">🔧 기타 혜택</div>
+                  <div class="form-group">
+                    <label>기타 혜택 절약액 (원)</label>
+                    <input
+                      type="number"
+                      id="benefitOtherValue"
+                      placeholder="예: 2,000"
+                      min="0"
+                      step="100"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 💾 용량형 필드 -->
+              <div
+                id="storage-fields"
+                class="type-fields"
+                style="display: none"
+              >
+                <div class="form-group">
+                  <label>📦 제공 용량</label>
+                  <p class="sub-label">구독 서비스에서 제공하는 전체 용량은?</p>
+                  <div class="storage-input-group">
+                    <input
+                      type="number"
+                      id="storageTotalCapacity"
+                      placeholder="예: 100"
+                      min="0"
+                      step="0.1"
+                    />
+                    <select id="storageTotalCapacityUnit">
+                      <option value="kb">KB</option>
+                      <option value="mb">MB</option>
+                      <option value="gb" selected>GB</option>
+                      <option value="tb">TB</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>📊 사용 중인 용량</label>
+                  <p class="sub-label">현재 사용 중인 용량은?</p>
+                  <div class="storage-input-group">
+                    <input
+                      type="number"
+                      id="storageUsedCapacity"
+                      placeholder="예: 30"
+                      min="0"
+                      step="0.1"
+                    />
+                    <select id="storageUsedCapacityUnit">
+                      <option value="kb">KB</option>
+                      <option value="mb">MB</option>
+                      <option value="gb" selected>GB</option>
+                      <option value="tb">TB</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -256,74 +516,340 @@
                   </div>
                 </div>
 
+                <!-- 유형 선택 -->
                 <div class="form-row">
                   <div class="form-group">
-                    <label>기대 사용시간 (월)</label>
-                    <div class="time-input-group-comparison">
-                      <input
-                        type="number"
-                        id="comparisonExpectedHours"
-                        placeholder="0"
-                        min="0"
-                        step="1"
-                      />
-                      <span>시간</span>
-                      <input
-                        type="number"
-                        id="comparisonExpectedMinutes"
-                        placeholder="0"
-                        min="0"
-                        max="59"
-                        step="1"
-                      />
-                      <span>분</span>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>실제 사용시간</label>
-                    <div class="input-mode-selector-comparison">
-                      <label class="mode-option-comparison">
+                    <label> 구독 유형</label>
+                    <div class="comparison-type-selector">
+                      <label class="comparison-type-option">
                         <input
                           type="radio"
-                          name="comparisonActualTimeInputMode"
-                          value="weekly"
+                          name="comparisonSubscriptionType"
+                          value="content"
                           checked
                         />
-                        주간으로 입력 (X4)
+                        <span>📺 콘텐츠형</span>
                       </label>
-                      <label class="mode-option-comparison">
+                      <label class="comparison-type-option">
                         <input
                           type="radio"
-                          name="comparisonActualTimeInputMode"
-                          value="monthly"
+                          name="comparisonSubscriptionType"
+                          value="benefit"
                         />
-                        월간으로 직접입력
+                        <span>🎁 혜택형</span>
+                      </label>
+                      <label class="comparison-type-option">
+                        <input
+                          type="radio"
+                          name="comparisonSubscriptionType"
+                          value="storage"
+                        />
+                        <span>💾 용량형</span>
                       </label>
                     </div>
-                    <p
-                      class="sub-label-comparison"
-                      id="comparisonActualTimeSubLabel"
-                    >
-                      디지털웰빙에서 본 주간 사용 시간 (자동으로 X4 계산됩니다)
+                  </div>
+                </div>
+
+                <!-- 콘텐츠형 필드 -->
+                <div
+                  id="comparison-content-fields"
+                  class="comparison-type-fields"
+                  style="display: block"
+                >
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>기대 사용시간 (월)</label>
+                      <div class="time-input-group-comparison">
+                        <input
+                          type="number"
+                          id="comparisonExpectedHours"
+                          placeholder="0"
+                          min="0"
+                          step="1"
+                        />
+                        <span>시간</span>
+                        <input
+                          type="number"
+                          id="comparisonExpectedMinutes"
+                          placeholder="0"
+                          min="0"
+                          max="59"
+                          step="1"
+                        />
+                        <span>분</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>실제 사용시간</label>
+                      <div class="input-mode-selector-comparison">
+                        <label class="mode-option-comparison">
+                          <input
+                            type="radio"
+                            name="comparisonActualTimeInputMode"
+                            value="weekly"
+                            checked
+                          />
+                          주간으로 입력 (X4)
+                        </label>
+                        <label class="mode-option-comparison">
+                          <input
+                            type="radio"
+                            name="comparisonActualTimeInputMode"
+                            value="monthly"
+                          />
+                          월간으로 직접입력
+                        </label>
+                      </div>
+                      <p
+                        class="sub-label-comparison"
+                        id="comparisonActualTimeSubLabel"
+                      >
+                        디지털웰빙에서 본 주간 사용 시간 (자동으로 X4
+                        계산됩니다)
+                      </p>
+                      <div class="time-input-group-comparison">
+                        <input
+                          type="number"
+                          id="comparisonActualHours"
+                          placeholder="0"
+                          min="0"
+                          step="1"
+                        />
+                        <span>시간</span>
+                        <input
+                          type="number"
+                          id="comparisonActualMinutes"
+                          placeholder="0"
+                          min="0"
+                          max="59"
+                          step="1"
+                        />
+                        <span>분</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 혜택형 필드 -->
+                <div
+                  id="comparison-benefit-fields"
+                  class="comparison-type-fields"
+                  style="display: none"
+                >
+                  <div class="form-group">
+                    <label>🎯 혜택 유형 선택 (복수 선택 가능)</label>
+                    <p class="sub-label-comparison">
+                      이번 달에 사용한 혜택을 모두 선택해주세요
                     </p>
-                    <div class="time-input-group-comparison">
+                    <div class="benefit-type-checkboxes">
+                      <label class="benefit-checkbox">
+                        <input
+                          type="checkbox"
+                          name="comparisonBenefitType"
+                          value="shipping"
+                        />
+                        <span>📦 무료배송</span>
+                      </label>
+                      <label class="benefit-checkbox">
+                        <input
+                          type="checkbox"
+                          name="comparisonBenefitType"
+                          value="coupon"
+                        />
+                        <span>🎟️ 할인 쿠폰</span>
+                      </label>
+                      <label class="benefit-checkbox">
+                        <input
+                          type="checkbox"
+                          name="comparisonBenefitType"
+                          value="memberDiscount"
+                        />
+                        <span>👤 멤버십 전용 할인</span>
+                      </label>
+                      <label class="benefit-checkbox">
+                        <input
+                          type="checkbox"
+                          name="comparisonBenefitType"
+                          value="points"
+                        />
+                        <span>⭐ 포인트 적립</span>
+                      </label>
+                      <label class="benefit-checkbox">
+                        <input
+                          type="checkbox"
+                          name="comparisonBenefitType"
+                          value="other"
+                        />
+                        <span>🔧 기타</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- 무료배송 입력 필드 -->
+                  <div
+                    id="comparison-benefit-shipping-fields"
+                    class="benefit-detail-fields"
+                    style="display: none"
+                  >
+                    <div class="benefit-section-header">📦 무료배송</div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>배송 사용 횟수 (월)</label>
+                        <input
+                          type="number"
+                          id="comparisonBenefitShippingCount"
+                          placeholder="예: 12"
+                          min="0"
+                          step="1"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>평균 배송비 (원)</label>
+                        <div class="input-with-button">
+                          <input
+                            type="number"
+                            id="comparisonBenefitShippingFee"
+                            placeholder="3,000"
+                            min="0"
+                            step="100"
+                          />
+                          <button
+                            type="button"
+                            class="btn-suggest-value"
+                            onclick="suggestComparisonShippingFee()"
+                          >
+                            💡 3,000원
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 할인 쿠폰 입력 필드 -->
+                  <div
+                    id="comparison-benefit-coupon-fields"
+                    class="benefit-detail-fields"
+                    style="display: none"
+                  >
+                    <div class="benefit-section-header">🎟️ 할인 쿠폰</div>
+                    <div class="form-group">
+                      <label>이번 달 할인 총액 (원)</label>
                       <input
                         type="number"
-                        id="comparisonActualHours"
-                        placeholder="0"
+                        id="comparisonBenefitCouponTotal"
+                        placeholder="예: 15,000"
                         min="0"
-                        step="1"
+                        step="100"
                       />
-                      <span>시간</span>
+                    </div>
+                  </div>
+
+                  <!-- 멤버십 전용 할인 입력 필드 -->
+                  <div
+                    id="comparison-benefit-member-discount-fields"
+                    class="benefit-detail-fields"
+                    style="display: none"
+                  >
+                    <div class="benefit-section-header">
+                      👤 멤버십 전용 할인
+                    </div>
+                    <div class="form-group">
+                      <label>이번 달 할인 총액 (원)</label>
                       <input
                         type="number"
-                        id="comparisonActualMinutes"
-                        placeholder="0"
+                        id="comparisonBenefitMemberDiscountTotal"
+                        placeholder="예: 8,000"
                         min="0"
-                        max="59"
-                        step="1"
+                        step="100"
                       />
-                      <span>분</span>
+                    </div>
+                  </div>
+
+                  <!-- 포인트 적립 입력 필드 -->
+                  <div
+                    id="comparison-benefit-points-fields"
+                    class="benefit-detail-fields"
+                    style="display: none"
+                  >
+                    <div class="benefit-section-header">⭐ 포인트 적립</div>
+                    <div class="form-group">
+                      <label>적립 포인트 원화 환산 (원)</label>
+                      <input
+                        type="number"
+                        id="comparisonBenefitPointsValue"
+                        placeholder="예: 5,000"
+                        min="0"
+                        step="100"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- 기타 입력 필드 -->
+                  <div
+                    id="comparison-benefit-other-fields"
+                    class="benefit-detail-fields"
+                    style="display: none"
+                  >
+                    <div class="benefit-section-header">🔧 기타 혜택</div>
+                    <div class="form-group">
+                      <label>기타 혜택 절약액 (원)</label>
+                      <input
+                        type="number"
+                        id="comparisonBenefitOtherValue"
+                        placeholder="예: 2,000"
+                        min="0"
+                        step="100"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 용량형 필드 -->
+                <div
+                  id="comparison-storage-fields"
+                  class="comparison-type-fields"
+                  style="display: none"
+                >
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>📦 제공 용량</label>
+                      <p class="sub-label-comparison">
+                        구독 서비스에서 제공하는 전체 용량은?
+                      </p>
+                      <div class="storage-input-group">
+                        <input
+                          type="number"
+                          id="comparisonStorageTotalCapacity"
+                          placeholder="예: 100"
+                          min="0"
+                          step="0.1"
+                        />
+                        <select id="comparisonStorageTotalCapacityUnit">
+                          <option value="kb">KB</option>
+                          <option value="mb">MB</option>
+                          <option value="gb" selected>GB</option>
+                          <option value="tb">TB</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>📊 사용 중인 용량</label>
+                      <p class="sub-label-comparison">현재 사용 중인 용량은?</p>
+                      <div class="storage-input-group">
+                        <input
+                          type="number"
+                          id="comparisonStorageUsedCapacity"
+                          placeholder="예: 30"
+                          min="0"
+                          step="0.1"
+                        />
+                        <select id="comparisonStorageUsedCapacityUnit">
+                          <option value="kb">KB</option>
+                          <option value="mb">MB</option>
+                          <option value="gb" selected>GB</option>
+                          <option value="tb">TB</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -348,6 +874,7 @@
                 <thead>
                   <tr>
                     <th>서비스명</th>
+                    <th>유형</th>
                     <th>활용률</th>
                     <th>미활용 비용</th>
                     <th>등급</th>
@@ -386,6 +913,11 @@
     </div>
 
     <script src="js/calculator.js"></script>
+    <script src="js/SubscriptionAnalyzer.js"></script>
+    <script src="js/ContentConsumptionAnalyzer.js"></script>
+    <script src="js/BenefitConsumptionAnalyzer.js"></script>
+    <script src="js/StorageBasedAnalyzer.js"></script>
+    <script src="js/type-analyzer.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

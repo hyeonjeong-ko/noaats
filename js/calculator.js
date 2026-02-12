@@ -67,9 +67,17 @@ class SubscriptionCalculator {
     // 시간당 비용 계산
     const costPerHour = Math.round((monthlyFee / actualTotalHours) * 100) / 100;
 
-    // v3 추가: 미활용 비용 = 월 구독료 × (1 - 활용률%)
-    const unusedCost =
-      Math.round(monthlyFee * (1 - utilizationRate / 100) * 100) / 100;
+    // v3 추가: 미활용 비용 (활용률 < 100%일 때만)
+    let unusedCost = 0;
+    let surplusValue = 0;
+
+    if (utilizationRate < 100) {
+      unusedCost =
+        Math.round(monthlyFee * (1 - utilizationRate / 100) * 100) / 100;
+    } else if (utilizationRate > 100) {
+      surplusValue =
+        Math.round(monthlyFee * (utilizationRate / 100 - 1) * 100) / 100;
+    }
 
     // v3 추가: 연간 누적 손실 = 미활용 비용 × 12
     const annualUnusedCost = Math.round(unusedCost * 12 * 100) / 100;
@@ -80,6 +88,7 @@ class SubscriptionCalculator {
     // v4 추가: 커피 잔 수 환산
     const coffeeEquivalent = monthlyFee / this.COFFEE_PRICE;
     const unusedCoffeeCups = unusedCost / this.COFFEE_PRICE;
+    const surplusCoffeeCups = surplusValue / this.COFFEE_PRICE;
 
     return {
       monthlyFee: monthlyFee,
@@ -88,10 +97,12 @@ class SubscriptionCalculator {
       utilizationRate: utilizationRate,
       costPerHour: costPerHour,
       unusedCost: unusedCost,
+      surplusValue: surplusValue,
       annualUnusedCost: annualUnusedCost,
       remainingHours: remainingHours,
       coffeeEquivalent: coffeeEquivalent,
       unusedCoffeeCups: unusedCoffeeCups,
+      surplusCoffeeCups: surplusCoffeeCups,
       timestamp: new Date(),
     };
   }
@@ -224,6 +235,7 @@ class SubscriptionCalculator {
 
   /**
    * v4: 선택된 생활소비 항목으로 환산 메시지 생성
+   * 미활용/초과 가치 분기 처리
    * @param {object} result - calculateUtilization 결과
    * @param {string} itemKey - 선택된 항목 키 (coffee, chicken, movie, lunch, subway)
    * @returns {string} 생활소비 환산 메시지
@@ -237,21 +249,47 @@ class SubscriptionCalculator {
     }
 
     const monthlyEquivalent = result.monthlyFee / item.price;
-    const unusedEquivalent = result.unusedCost / item.price;
 
     // 이모지와 상품명 분리
     const parts = item.name.split(" ");
     const emoji = parts[0];
-    const product = parts[1];
+    const product = parts.slice(1).join(" ");
 
-    return `
+    // 기본 메시지 - 월 구독료 환산
+    let message = `
       <strong>월 구독료 환산:</strong> ${emoji} ${product} <strong>${monthlyEquivalent.toFixed(1)}개</strong>
       <br>
-      <strong>낭비된 가치:</strong> ${emoji} ${product} <strong>${unusedEquivalent.toFixed(1)}개</strong>
-      <br><br>
-      <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
-      이번 달 낭비한 것은 ${emoji} ${product} 약 ${unusedEquivalent.toFixed(1)}개입니다.</em>
     `;
+
+    // 미활용/초과 가치에 따른 분기 처리
+    if (result.unusedCost > 0) {
+      // 🔴 손해 구간 (미활용 비용 존재)
+      const unusedEquivalent = result.unusedCost / item.price;
+      message += `
+        <strong>미활용 가치:</strong> ${emoji} ${product} <strong>${unusedEquivalent.toFixed(1)}개</strong>
+        <br><br>
+        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+        이번 달 ${emoji} ${product} 약 ${unusedEquivalent.toFixed(1)}개의 가치가 충분히 활용되지 않았습니다.</em>
+      `;
+    } else if (result.surplusValue > 0) {
+      // 🟢 이득 구간 (초과 가치 존재)
+      const surplusEquivalent = result.surplusValue / item.price;
+      message += `
+        <strong>초과 이득:</strong> ${emoji} ${product} <strong>+${surplusEquivalent.toFixed(1)}개</strong>
+        <br><br>
+        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+        이번 달 ${emoji} ${product} 약 ${surplusEquivalent.toFixed(1)}개의 추가 가치를 더 얻었습니다.</em>
+      `;
+    } else {
+      // ⚪ 본전 구간 (활용률 = 100%)
+      message += `
+        <br>
+        <em>이 구독은 매달 ${emoji} ${product} 약 ${monthlyEquivalent.toFixed(1)}개의 가치입니다.<br>
+        이번 달 정확히 본전을 맞추셨습니다! ✨</em>
+      `;
+    }
+
+    return message;
   }
 
   /**

@@ -1016,16 +1016,17 @@ btnAddSubscription.addEventListener("click", function () {
     }
 
     // 구독 데이터 추가 (type 필드 포함)
+    // ...result를 먼저 spread한 후 type을 마지막에 배치하여 덮어쓰기
     const subscription = {
       id: Date.now(),
       serviceName,
-      type: currentComparisonType,
       serviceFee,
+      grade,
+      ...result, // 유형별로 추가적인 정보 포함
+      type: currentComparisonType, // 마지막에 배치하여 result.type 덮어쓰기
       utilizationRate: result.utilizationRate,
       unusedCost: result.unusedCost,
       annualUnusedCost: result.annualUnusedCost,
-      grade,
-      ...result, // 유형별로 추가적인 정보도 포함
     };
 
     comparisonSubscriptions.push(subscription);
@@ -1201,7 +1202,7 @@ function updateEfficiencyAnalysis() {
     <h4>⚠️ 비효율성 분석</h4>
     <div class="efficiency-summary">
       <p><strong>가장 비효율적인 구독:</strong> ${leastEfficient.serviceName}</p>
-      <p class="efficiency-detail">유형: ${typeLabels[leastEfficient.type]} | 활용률: ${leastEfficient.utilizationRate.toFixed(1)}%</p>
+      <p class="efficiency-detail">유형: ${typeLabels[leastEfficient.type] || "알 수 없음"} | 활용률: ${leastEfficient.utilizationRate.toFixed(1)}%</p>
       <p class="efficiency-highlight">월 손실: <strong>${calculator.formatCurrency(leastEfficient.unusedCost)}원</strong></p>
       <p class="efficiency-highlight">연간 손실: <strong>${calculator.formatCurrency(leastEfficient.annualUnusedCost)}원</strong></p>
     </div>

@@ -928,3 +928,373 @@ footer {
     font-size: 12px;
   }
 }
+
+/* 구독 타입 선택 */
+.type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f9f9f9;
+}
+
+.type-option input[type="radio"] {
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.type-option:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.type-option input[type="radio"]:checked + .type-name {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.type-option input[type="radio"]:checked ~ .type-desc {
+  color: #667eea;
+}
+
+.type-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.type-desc {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+  transition: color 0.3s;
+}
+
+.type-option input[type="radio"]:checked + .type-name + .type-desc {
+  color: #667eea;
+}
+
+.type-option input[type="radio"]:checked {
+  accent-color: #667eea;
+}
+
+/* 반응형 타입 선택 */
+@media (max-width: 768px) {
+  .type-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .type-option {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .type-option input[type="radio"] {
+    margin-bottom: 0;
+  }
+
+  .type-name {
+    text-align: left;
+  }
+}
+
+/* 저장소 단위 입력 그룹 */
+.storage-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.storage-input-group input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.storage-input-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  min-width: 80px;
+}
+
+/* 복수 비교 - 유형 선택 */
+.comparison-type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+  border-radius: 12px;
+}
+
+.comparison-type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px;
+  border: 2px solid #e0e8f8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  color: #555;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  white-space: normal;
+  word-break: keep-all;
+}
+
+.comparison-type-option input[type="radio"] {
+  accent-color: #667eea;
+  margin-bottom: 10px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+}
+
+.comparison-type-option input[type="radio"]:hover {
+  transform: scale(1.15);
+}
+
+.comparison-type-option span {
+  font-weight: 600;
+  color: #333;
+  transition: all 0.2s ease;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+}
+
+.comparison-type-option:hover {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f9fcff 0%, #f3f8ff 100%);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.12);
+  transform: translateY(-3px);
+  color: #667eea;
+}
+
+.comparison-type-option input[type="radio"]:checked {
+  accent-color: #667eea;
+}
+
+.comparison-type-option input[type="radio"]:checked + span {
+  color: #667eea;
+  font-weight: 700;
+}
+
+/* 유형별 필드 표시 */
+.comparison-type-fields {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* 비효율성 분석 개선 */
+.efficiency-analysis {
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+  border-radius: 8px;
+  border-left: 4px solid #dc3545;
+}
+
+.efficiency-analysis h4 {
+  color: #dc3545;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.efficiency-summary {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border-left: 3px solid #dc3545;
+}
+
+.efficiency-summary p {
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.efficiency-summary p strong {
+  color: #333;
+}
+
+.efficiency-detail {
+  font-size: 12px !important;
+  color: #666;
+}
+
+.efficiency-highlight {
+  font-size: 14px !important;
+  color: #dc3545 !important;
+  font-weight: 600;
+}
+
+.efficiency-stats {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.efficiency-stats p {
+  margin: 6px 0;
+  font-size: 13px;
+  color: #555;
+}
+
+/* 반응형 - 작은 화면 */
+@media (max-width: 480px) {
+  .comparison-type-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-table {
+    font-size: 12px;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 8px 4px;
+  }
+}
+/* ===== 혜택형 재설계 스타일 ===== */
+
+/* 혜택 유형 체크박스 그룹 */
+.benefit-type-checkboxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+}
+
+.benefit-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+}
+
+.benefit-checkbox input[type="checkbox"] {
+  accent-color: #667eea;
+  margin-right: 8px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.benefit-checkbox:hover {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f9fcff 0%, #f3f8ff 100%);
+}
+
+.benefit-checkbox input[type="checkbox"]:checked + span {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.benefit-checkbox span {
+  transition: color 0.2s ease;
+}
+
+/* 혜택 상세 필드 섹션 */
+.benefit-detail-fields {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e8eef8;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.benefit-section-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* 기본값 제안 버튼 */
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-with-button input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.btn-suggest-value {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+  border: 1px solid #ffd54f;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f57f17;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-suggest-value:hover {
+  background: linear-gradient(135deg, #ffe082 0%, #ffd54f 100%);
+  box-shadow: 0 4px 8px rgba(245, 127, 23, 0.15);
+  transform: translateY(-1px);
+}
+
+/* 입력 힌트 텍스트 */
+.input-hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 6px;
+  line-height: 1.4;
+}
