@@ -141,8 +141,7 @@ subscription-break-even-app/
 ## 기술 스택
 
 **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6+)
-
-**Backend (Test)**: Node.js
+**Test Environment**: Node.js
 
 ---
 
