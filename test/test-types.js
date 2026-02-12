@@ -36,7 +36,7 @@ test("Netflix 분석: 14900원, 기대 20시간, 실제 6시간", () => {
   const result = analyzer.getAnalysisResult();
 
   assert(result.monthlyFee === 14900, "구독료 불일치");
-  assert(Math.abs(result.utilizationRate - 0.3) < 0.01, "활용률 불일치");
+  assert(Math.abs(result.utilizationRate - 30) < 1, "활용률 불일치");
   assert(result.costPerHour > 0, "시간당 비용 계산 오류");
 });
 
@@ -44,7 +44,7 @@ test("100% 활용: 활용률 100%, 낭비액 0", () => {
   const analyzer = new ContentConsumptionAnalyzer(10000, 10, 10);
   const result = analyzer.getAnalysisResult();
 
-  assert(result.utilizationRate === 1.0, "활용률이 1.0이 아님");
+  assert(result.utilizationRate === 100, "활용률이 100이 아님");
   assert(result.unusedCost === 0, "낭비액이 0이 아님");
 });
 
@@ -70,7 +70,7 @@ test("Coupang WOW: 9900원, 5회 사용, 1회 5000원 절약", () => {
   const result = analyzer.getAnalysisResult();
 
   assert(result.actualValue === 25000, "획득 가치 계산 오류");
-  assert(result.utilizationRate > 2.5, "활용률 2.5 이상이어야 함");
+  assert(result.utilizationRate > 250, "활용률 250% 이상이어야 함");
   assert(result.unusedCost === 0, "초과 이득이므로 낭비액 0");
 });
 
@@ -79,7 +79,7 @@ test("멤버십 저활용: 9900원, 1회, 3000원 절약", () => {
   const result = analyzer.getAnalysisResult();
 
   assert(result.actualValue === 3000, "획득 가치가 3000이 아님");
-  assert(Math.abs(result.utilizationRate - 0.303) < 0.01, "활용률 약 30.3%");
+  assert(Math.abs(result.utilizationRate - 30.3) < 1, "활용률 약 30%");
   assert(result.breakEvenUsage > 0, "추가 필요 횟수 계산 오류");
 });
 
@@ -99,7 +99,7 @@ test("Google Drive: 100원, 100GB 제공, 30GB 사용", () => {
   const analyzer = new StorageBasedAnalyzer(100, 100, 30);
   const result = analyzer.getAnalysisResult();
 
-  assert(result.utilizationRate === 0.3, "활용률이 30%가 아님");
+  assert(result.utilizationRate === 30, "활용률이 30%가 아님8");
   assert(result.remainingCapacity === 70, "남은 용량이 70GB가 아님");
   assert(result.costPerGB > 0, "1GB당 비용 계산 오류");
 });
@@ -108,7 +108,7 @@ test("클라우드 저장소 활용도 낮음: 50% 활용", () => {
   const analyzer = new StorageBasedAnalyzer(5000, 200, 100);
   const result = analyzer.getAnalysisResult();
 
-  assert(result.utilizationRate === 0.5, "활용률이 50%가 아님");
+  assert(result.utilizationRate === 50, "활용률이 50%가 아님8");
   assert(result.decision.level === "adequate", "50% 활용은 적절 수준");
 });
 
@@ -116,7 +116,7 @@ test("클라우드 완전 활용: 100% 활용", () => {
   const analyzer = new StorageBasedAnalyzer(5000, 100, 100);
   const result = analyzer.getAnalysisResult();
 
-  assert(result.utilizationRate === 1.0, "활용률이 100%가 아님");
+  assert(result.utilizationRate === 100, "활용률이 100%가 아님8");
   assert(result.decision.level === "perfect", "100% 활용은 완벽");
   assert(result.remainingCapacity === 0, "남은 용량 0");
 });
